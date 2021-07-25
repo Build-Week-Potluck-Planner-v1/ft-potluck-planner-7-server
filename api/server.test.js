@@ -46,8 +46,14 @@ describe('server.js', () => {
       });
 
       it('Responds with a 400 and a message on existing username', async () => {
-        const users = await db('users');
-        console.log(users);
+        const res = await request(server)
+              .post('/api/auth/register')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe('Username already exists');
       });
 
       it.todo('Adds a new user to the system');
