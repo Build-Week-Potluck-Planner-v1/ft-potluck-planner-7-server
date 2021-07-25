@@ -25,7 +25,13 @@ describe('server.js', () => {
   describe('users', () => {
 
     describe('[POST] /api/auth/register', () => {
-      it.todo('Responds with a 400 and a message on missing password or username');
+      it('Responds with a 400 and a message on missing password or username', async () => {
+        const res = await request(server)
+              .post('/api/auth/register')
+              .send({});
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe('Please provide a username and password');
+      });
       it.todo('Responds with a 400 and a message on bad typing');
       it.todo('Responds with a 400 and a message on existing username');
       it.todo('Adds a new user to the system');
