@@ -45,7 +45,11 @@ describe('server.js', () => {
         expect(res.body.message).toBe('Username and password must both be strings');
       });
 
-      it.todo('Responds with a 400 and a message on existing username');
+      it('Responds with a 400 and a message on existing username', async () => {
+        const users = await db('users');
+        console.log(users);
+      });
+
       it.todo('Adds a new user to the system');
       it.todo('Responds with 201 on good register');
       it.todo('Responds with user id and username on good register');
