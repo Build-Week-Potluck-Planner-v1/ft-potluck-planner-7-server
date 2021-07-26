@@ -75,6 +75,21 @@ exports.getPotlucks = (req, res, next) => {
     .catch(next);
 };
 
+exports.checkUserIsOwner = (req, res, next) => {
+  Potlucks.getByIdAndOwner(req.params.id, req.user.id)
+    .then(potluck => {
+      if (potluck) {
+        next();
+      } else {
+        next({
+          status: 401,
+          message: 'Only the owner of the potluck is allowed to update it'
+        });
+      }
+    })
+    .catch(next);
+};
+
 exports.updatePotluck = (req, res, next) => {
   console.log('updatePotluck wired');
   next();

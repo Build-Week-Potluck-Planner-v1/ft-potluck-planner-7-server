@@ -19,6 +19,12 @@ exports.add = (potluck) => {
     });
 };
 
+exports.getByIdAndOwner = (id, owner_id) => {
+  return db('potlucks')
+    .where({id, owner_id})
+    .first();
+};
+
 exports.update = (id, potluck) => {
   return db('potlucks')
     .where({id})
