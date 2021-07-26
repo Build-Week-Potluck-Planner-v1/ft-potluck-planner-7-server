@@ -5,7 +5,8 @@
 - current endpoints are
   1. [POST] /api/auth/login
   2. [POST] /api/auth/register
-  3. [POST] /api/potlucks
+  3. [GET] /api/potlucks
+  4. [POST] /api/potlucks
 
 ## Scripts
 
