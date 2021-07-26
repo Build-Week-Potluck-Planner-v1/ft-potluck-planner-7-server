@@ -113,5 +113,65 @@ describe('server.js', () => {
       });
     });
 
+    describe('[POST] /api/auth/login', () => {
+
+      it('Responds with a 400 and a message on missing password or username', async () => {
+        const res = await request(server)
+              .post('/api/auth/login')
+              .send({});
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe('Please provide a username and password');
+      });
+
+      it('Responds with a 400 and a message on bad typing', async () => {
+        const res = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 1,
+                password: '1234'
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe('Username and password must both be strings');
+      });
+
+      it('Responds with a 400 and a message on nonexistent username', async () => {
+        const res = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test8',
+                password: '1234'
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe("Username doesn't exist");
+      });
+
+      it('Doesnt effect db', async () => {
+        const before = await db('users');
+
+        await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+
+        const after = await db('users');
+
+        expect(before).toMatchObject(after);
+      });
+
+      it('Responds with 200 on good login', async () => {
+        const res = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        expect(res.status).toBe(200);
+      });
+
+      it.todo('Responds with message and token on good register');
+    });
+
   });
 });
