@@ -40,8 +40,8 @@ exports.checkUsernameFree = ({ body: { username, password } }, res, next) => {
     .catch(next);
 };
 
-exports.hashPassword = ({body: { username, password }}, res, next) => {
-  console.log('hashPassword wired');
+exports.hashPassword = (req, res, next) => {
+  req.body.password = bcrypt.hashSync(req.body.password, 8);
   next();
 };
 
