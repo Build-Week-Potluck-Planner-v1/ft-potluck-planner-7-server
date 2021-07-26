@@ -1,5 +1,7 @@
-exports.validateBody = ({body: {username, password}}, res, next) => {
-  if (username && password) {
+exports.validateBody = (req, res, next) => {
+  const { username, password } = req.body;
+  if ( username && password ) {
+    req.body = { username, password };
     next();
   } else {
     next({
@@ -9,8 +11,8 @@ exports.validateBody = ({body: {username, password}}, res, next) => {
   }
 };
 
-exports.validateType = ({body: {username, password}}, res, next) => {
-  if (typeof username === 'string' && typeof password === 'string') {
+exports.validateType = ({ body: { username, password } }, res, next) => {
+  if ( typeof username === 'string' && typeof password === 'string' ) {
     next();
   } else {
     next({
