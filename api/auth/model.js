@@ -7,5 +7,8 @@ exports.getByUsername = (username) => {
 };
 
 exports.add = (user) => {
-  return db('users').insert(user);
+  return db('users').insert(user, ['id', 'username'])
+    .then(returnArray => {
+      return returnArray[0];
+    });
 };
