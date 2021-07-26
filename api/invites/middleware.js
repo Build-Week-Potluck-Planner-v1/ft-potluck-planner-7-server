@@ -75,6 +75,18 @@ exports.checkUserIsOwner = ({user, potluck}, res, next) => {
   }
 };
 
+exports.checkInviteExists = (req, res, next) => {
+  Invites.getByPotluckAndGuest(req.body)
+    .then(invite => {
+      if (invite) {
+        res.status(201).json(invite);
+      } else {
+        next();
+      }
+    })
+    .catch(next);
+};
+
 exports.addInvite = (req, res, next) => {
   Invites.add(req.body)
     .then(([added]) => {
