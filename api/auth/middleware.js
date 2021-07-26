@@ -40,6 +40,6 @@ exports.checkUsernameFree = ({ body: { username, password } }, res, next) => {
 };
 
 exports.addUser = ({body: { username, password } }, res, next) => {
-  console.log('addUser wired');
-  next();
+  Users.add({ username, password })
+    .then(next);
 };
