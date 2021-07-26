@@ -580,7 +580,25 @@ describe('server.js', () => {
         expect(res.body.message).toBe('Only the owner of the potluck is allowed to update it');
       });
 
-      it.todo('only allows existing potlucks to be updated');
+      it('only allows existing potlucks to be updated', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .put('/api/potlucks/1')
+              .set('Authorization', token)
+              .send({
+                date: 'next tuesday',
+                time: '1pm',
+                location: 'right here'
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'Potluck with given id does not exist');
+      });
 
       it('Updates potluck in db', async () => {
         const bigBonanza = {
