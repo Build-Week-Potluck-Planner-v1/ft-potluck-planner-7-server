@@ -44,5 +44,14 @@ describe('add', () => {
     });
   });
 
-  it.todo('returns added user');
+  it('returns added user', async () => {
+    const res = await Users.add({
+      username: 'test5',
+      password: '1234'
+    });
+    expect(res).toMatchObject({
+      username: 'test5'
+    });
+  });
+
 });
