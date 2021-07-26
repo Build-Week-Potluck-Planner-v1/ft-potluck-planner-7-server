@@ -13,9 +13,7 @@ const registerMiddleware = [
 ];
 
 router.post('/register', registerMiddleware, (req, res, next) => {
-  res.status(201).json({
-    message: 'Not implemented'
-  });
+  res.status(201).json(req.newUser);
 });
 
 module.exports = router;
