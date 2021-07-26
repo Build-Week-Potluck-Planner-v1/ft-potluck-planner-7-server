@@ -6,10 +6,7 @@ const {
 } = require ('./middleware');
 
 router.post('/', validatePotluck, validateType, addPotluck, (req, res, next) => {
-  next({
-    status: 404,
-    message: 'Not implemented'
-  });
+  res.status(201).json(req.potluck);
 });
 
 module.exports = router;

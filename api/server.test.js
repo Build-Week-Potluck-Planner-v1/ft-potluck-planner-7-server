@@ -333,7 +333,26 @@ describe('server.js', () => {
         expect(actual).toMatchObject(expected);
       });
 
-      it.todo('Responds with 201 on good post');
+      it('Responds with 201 on good post', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send(bigBonanza);
+        expect(res.status).toBe(201);
+      });
+
       it.todo('Responds with created potluck on good post');
 
     });

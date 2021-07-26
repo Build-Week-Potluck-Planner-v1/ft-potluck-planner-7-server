@@ -27,15 +27,14 @@ exports.validateType = (req, res, next) => {
 };
 
 exports.addPotluck = (req, res, next) => {
-  potluck = {
+  const potluck = {
     ...req.body,
     owner_id: req.user.id,
   };
 
-  console.log(potluck.date);
   Potlucks.add(potluck)
-    .then(potluck => {
-      console.log(potluck);
+    .then(added => {
+      req.potluck = added;
       next();
     })
     .catch(next);
