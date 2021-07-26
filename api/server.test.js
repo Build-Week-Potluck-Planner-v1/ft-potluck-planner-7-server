@@ -218,7 +218,74 @@ describe('server.js', () => {
 
   describe('potlucks', () => {
 
-    describe('[GET] /api/potlucks', () => {}); // for a nicer splash/display screen
+    describe('[GET] /api/potlucks', () => {
+
+      it('Responds with a 401 and a message when given no token', async () => {
+        const res = await request(server)
+              .get('/api/potlucks');
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('No token given');
+      });
+
+      it('Responds with a 401 when given bad token', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const badToken = token.substring(0,15) + 'a' + token.substring(16);
+        const res = await request(server)
+              .get('/api/potlucks')
+              .set('Authorization', badToken);
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Bad token given');
+      });
+
+      it.todo('Doesnt effect db');
+
+      it('Responds with 200 on good get', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .get('/api/potlucks')
+              .set('Authorization', token);
+        expect(res.status).toBe(200);
+      });
+
+      it('Responds with users potlucks on good get', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send(bigBonanza);
+        const res = await request(server)
+              .get('/api/potlucks')
+              .set('Authorization', token);
+        expect(res.body).toMatchObject([{
+          ...bigBonanza,
+          id: 1,
+          owner_id: 1
+        }]);
+      });
+
+    }); // for a nicer splash/display screen
+
     describe('[GET] /api/potlucks/:id', () => {});
     describe('[POST] /api/potlucks', () => {
 
