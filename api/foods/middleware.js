@@ -26,8 +26,8 @@ exports.validateType = ({body: {name}}, res, next) => {
 
 exports.addFood = (req, res, next) => {
   Foods.add(req.body)
-    .then(returnVal => {
-      console.log(returnVal);
+    .then(added => {
+      req.added = added;
       next();
     })
     .catch(next);

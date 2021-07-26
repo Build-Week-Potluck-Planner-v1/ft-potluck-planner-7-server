@@ -6,10 +6,8 @@ const {
 } = require('./middleware');
 
 router.post('/', validateFood, validateType, addFood, (req, res, next) => {
-  next({
-    status: 404,
-    message: 'Not implemented'
-  });
+  res.status(201).json(req.added);
+
 });
 
 module.exports = router;
