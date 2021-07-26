@@ -228,7 +228,13 @@ describe('server.js', () => {
     describe('[GET] /api/potlucks/:id', () => {});
     describe('[POST] /api/potlucks', () => {
 
-      it.todo('Responds with a 401 when given no token');
+      it('Responds with a 401 and a message when given no token', async () => {
+        const res = request(server)
+              .post('/api/potlucks')
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('No token given');
+      });
       it.todo('Responds with a 401 when given bad token');
       it.todo('Responds with 400 and a message when missing name, date, time or location');
       it.todo('Responds with 400 and a message when data is incorrectly typed');
