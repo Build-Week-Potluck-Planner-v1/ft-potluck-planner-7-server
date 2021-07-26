@@ -10,3 +10,20 @@ exports.validateInvite = (req, res, next) => {
     });
   }
 };
+
+
+exports.validateType = ({body: {guest_id, potluck_id}}, res, next) => {
+  const isValid = (input) => {
+    return ((typeof input === 'number') && // number check
+            (Math.floor(input) === input) && // integer check
+            (input > 0)); // positive check
+  };
+  if (isValid(guest_id) && isValid(potluck_id)) {
+    next();
+  } else {
+    next({
+      status: 400,
+      message: 'potluck_id and guest_id should be positive integers'
+    });
+  }
+};
