@@ -38,3 +38,8 @@ exports.checkUsernameFree = ({ body: { username, password } }, res, next) => {
     })
     .catch(next);
 };
+
+exports.addUser = ({body: { username, password } }, res, next) => {
+  console.log('addUser wired');
+  next();
+};
