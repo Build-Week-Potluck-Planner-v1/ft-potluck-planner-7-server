@@ -4,6 +4,7 @@ const {
   validateType,
   checkUsernameFree,
   checkUsernameExists,
+  validateCredentials,
   hashPassword,
   addUser
 } = require('./middleware');
@@ -19,7 +20,8 @@ router.post('/register', registerMiddleware, (req, res, next) => {
 
 
 const loginMiddleware = [
-  validateBody, validateType, checkUsernameExists
+  validateBody, validateType, checkUsernameExists,
+  validateCredentials
 ];
 
 router.post('/login', loginMiddleware, (req, res, next) => {
