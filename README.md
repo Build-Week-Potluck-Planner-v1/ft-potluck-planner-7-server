@@ -7,8 +7,9 @@
   2. [POST] /api/auth/register
   3. [GET] /api/potlucks
   4. [POST] /api/potlucks
-  5. [GET] /api/invites
-  6. [POST] /api/invites
+  5. [PUT] /api/potlucks/:id
+  6. [GET] /api/invites
+  7. [POST] /api/invites
 
 ## Scripts
 
