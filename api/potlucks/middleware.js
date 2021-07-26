@@ -39,3 +39,12 @@ exports.addPotluck = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getPotlucks = (req, res, next) => {
+  Potlucks.getByOwner(req.user.id)
+    .then(potlucks => {
+      req.potlucks = potlucks;
+      next();
+    })
+    .catch(next);
+};
