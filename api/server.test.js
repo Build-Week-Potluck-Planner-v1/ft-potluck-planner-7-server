@@ -2,6 +2,10 @@ const request = require('supertest');
 const server = require('./server');
 const db = require('./data/db-config');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const {
+  jwtSecret
+} = require('./auth/secret');
 
 beforeAll(async () => {
   await db.migrate.rollback();
@@ -23,6 +27,10 @@ it('sanity check', () => {
 describe('server.js', () => {
   it('is the correct testing environment', async () => {
     expect(process.env.NODE_ENV).toBe('testing');
+  });
+
+  it('is the correct jwt secret', () => {
+    expect(process.env.JWT_SECRET).toBe('testSecret');
   });
 
   describe('users', () => {
@@ -181,7 +189,20 @@ describe('server.js', () => {
         expect(res.status).toBe(200);
       });
 
-      it.todo('Responds with message and token on good register');
+      it('Responds with message and token on good register', async () => {
+        const res = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const decoded = jwt.decode(res.body.token);
+        expect(res.body.message).toBe('Welcome back, test1!');
+        expect(decoded).toMatchObject({
+          id: 1,
+          username: 'test1'
+        });
+      });
     });
 
   });
