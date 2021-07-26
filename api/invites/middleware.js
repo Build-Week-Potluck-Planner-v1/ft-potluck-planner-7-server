@@ -1,4 +1,5 @@
 const Invites = require('./model');
+const Users = require('../auth/model');
 
 exports.validateInvite = (req, res, next) => {
   const {body: {guest_id, potluck_id}} = req;
@@ -28,6 +29,21 @@ exports.validateType = ({body: {guest_id, potluck_id}}, res, next) => {
       message: 'potluck_id and guest_id should be positive integers'
     });
   }
+};
+
+exports.checkGuestExists = ({body: {guest_id}}, res, next) => {
+  Users.getById(guest_id)
+    .then(guest => {
+      if (guest) {
+        next();
+      } else {
+        next({
+          status: 400,
+          message: 'Only existing users can be invited'
+        });
+      }
+    })
+    .catch(next);
 };
 
 exports.addInvite = (req, res, next) => {
