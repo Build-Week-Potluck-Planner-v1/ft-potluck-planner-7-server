@@ -1,3 +1,5 @@
+const Invites = require('./model');
+
 exports.validateInvite = (req, res, next) => {
   const {body: {guest_id, potluck_id}} = req;
   if (guest_id && potluck_id){
@@ -26,4 +28,13 @@ exports.validateType = ({body: {guest_id, potluck_id}}, res, next) => {
       message: 'potluck_id and guest_id should be positive integers'
     });
   }
+};
+
+exports.addInvite = (req, res, next) => {
+  Invites.add(req.body)
+    .then(([added]) => {
+      req.added = added;
+      next();
+    })
+    .catch(next);
 };
