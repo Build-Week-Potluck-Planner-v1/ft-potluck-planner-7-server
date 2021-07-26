@@ -106,6 +106,10 @@ exports.checkUserIsOwner = (req, res, next) => {
 };
 
 exports.updatePotluck = (req, res, next) => {
-  console.log('updatePotluck wired');
-  next();
+  Potlucks.update(req.params.id, req.body)
+    .then(returnVal => {
+      console.log(returnVal);
+      next();
+    })
+    .catch(next);
 };
