@@ -1,3 +1,5 @@
+const Potlucks = require('./model');
+
 exports.validatePotluck = (req, res, next) => {
   const {body: {name, date, location}} = req;
   if (name && date && location) {
@@ -13,10 +15,12 @@ exports.validatePotluck = (req, res, next) => {
 
 exports.validateType = (req, res, next) => {
   const {body: {name, date, location}} = req;
+  console.log('date:', date);
   const dateChecked = Date.parse(date);
+  console.log('dateChecked:', dateChecked);
   if (typeof name === 'string' && typeof location === 'string' && !isNaN(dateChecked)){
-    console.log(dateChecked.toISOString());
-    // req.body.date = date
+    const newDate = new Date(dateChecked);
+    req.body.date = newDate.toISOString();
     next();
   } else {
     next({
@@ -24,4 +28,19 @@ exports.validateType = (req, res, next) => {
       message: 'Name and location should be strings, date should be an iso date string'
     });
   }
+};
+
+exports.addPotluck = (req, res, next) => {
+  potluck = {
+    ...req.body,
+    owner_id: req.user.id,
+  };
+
+  console.log(potluck.date);
+  Potlucks.add(potluck)
+    .then(potluck => {
+      console.log(potluck);
+      next();
+    })
+    .catch(next);
 };

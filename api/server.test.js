@@ -299,6 +299,7 @@ describe('server.js', () => {
               .post('/api/potlucks')
               .set('Authorization', token)
               .send(bigBonanza);
+        console.log(res.body);
         const expected = [
           bigBonanza
         ];

@@ -10,6 +10,10 @@ exports.restricted = (req, res, next) => {
           message: 'Bad token given'
         });
       } else {
+        req.user = {
+          id: decoded.id,
+          username: decoded.username
+        };
         next();
       }
     });
