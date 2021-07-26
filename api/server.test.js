@@ -541,6 +541,47 @@ describe('server.js', () => {
           'date, time and location should all be strings');
       });
 
+      it('only allows owner to update', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        {
+          const {body: {token}} = await request(server)
+                .post('/api/auth/login')
+                .send({
+                  username: 'test1',
+                  password: '1234'
+                });
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+        }
+
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test2',
+                password: '1234'
+              });
+        const newBonanza = {
+          date: 'July 28',
+          time: '9am',
+          location: 'over there'
+        };
+        const res = await request(server)
+              .put('/api/potlucks/1')
+              .set('Authorization', token)
+              .send(newBonanza);
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Only the owner of the potluck is allowed to update it');
+      });
+
+      it.todo('only allows existing potlucks to be updated');
+
       it('Updates potluck in db', async () => {
         const bigBonanza = {
           name: 'big bonanza',
@@ -555,9 +596,9 @@ describe('server.js', () => {
                 password: '1234'
               });
         await request(server)
-              .post('/api/potlucks')
-              .set('Authorization', token)
-              .send(bigBonanza);
+          .post('/api/potlucks')
+          .set('Authorization', token)
+          .send(bigBonanza);
 
         const newBonanza = {
           date: 'July 28',

@@ -18,3 +18,9 @@ exports.add = (potluck) => {
       return added;
     });
 };
+
+exports.update = (id, potluck) => {
+  return db('potlucks')
+    .where({id})
+    .update(potluck, ['id', 'owner_id', 'name', 'date', 'time', 'location']);
+};

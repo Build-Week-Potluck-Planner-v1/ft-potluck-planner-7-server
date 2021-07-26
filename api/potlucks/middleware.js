@@ -74,3 +74,8 @@ exports.getPotlucks = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.updatePotluck = (req, res, next) => {
+  console.log('updatePotluck wired');
+  next();
+};

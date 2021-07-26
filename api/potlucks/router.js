@@ -5,7 +5,8 @@ const {
   validateTypePut,
   addPotluck,
   getPotlucks,
-  validatePut
+  validatePut,
+  updatePotluck
 } = require ('./middleware');
 
 router.get('/', getPotlucks, (req, res, next) => {
@@ -16,7 +17,7 @@ router.post('/', validatePotluck, validateType, addPotluck, (req, res, next) => 
   res.status(201).json(req.potluck);
 });
 
-router.put('/:id', validatePut, validateTypePut, (req, res, next) => {
+router.put('/:id', validatePut, validateTypePut, updatePotluck, (req, res, next) => {
   next({
     status: 404,
     message: 'Not implemented'
