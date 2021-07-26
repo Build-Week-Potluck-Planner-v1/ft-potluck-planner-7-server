@@ -21,7 +21,7 @@ exports.validateType = (req, res, next) => {
   } else {
     next({
       status: 400,
-      message: 'Name and location should be strings, date should be an iso date string'
+      message: 'name, date, time and location should all be strings'
     });
   }
 };
