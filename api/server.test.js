@@ -652,7 +652,47 @@ describe('server.js', () => {
         expect(res.body.message).toBe('Only the owner of the potluck can invite guests');
       });
 
-      it.todo('Only allows non-invited users to be invited');
+      it('adding invites are idempotent', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+
+        {
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+        }
+
+        const newInvite = {
+          guest_id: 2,
+          potluck_id: 1
+        };
+        await request(server)
+          .post('/api/invites')
+          .set('Authorization', token)
+          .send(newInvite);
+
+        await request(server)
+          .post('/api/invites')
+          .set('Authorization', token)
+          .send(newInvite);
+
+        const expected = [
+          newInvite
+        ];
+        const actual = await db('users_potlucks');
+        expect(actual).toMatchObject(expected);
+      });
 
       it('Adds invite to db', async () => {
         const {body: {token}} = await request(server)
