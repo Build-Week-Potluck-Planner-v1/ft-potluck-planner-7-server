@@ -5,11 +5,8 @@ const {
   addInvite
 } = require('./middleware');
 
-router.post('/', validateInvite, validateType, addInvite, (req, res, next) => {
-  next({
-    status: 404,
-    message: 'Not Implemented'
-  });
+router.post('/', validateInvite, validateType, addInvite, ({added}, res, next) => {
+  res.status(201).json(added);
 });
 
 module.exports = router;

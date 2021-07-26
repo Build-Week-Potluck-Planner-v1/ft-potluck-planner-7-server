@@ -613,7 +613,7 @@ describe('server.js', () => {
           guest_id: 2,
           potluck_id: 1
         };
-        const res = request(server)
+        const res = await request(server)
               .post('/api/invites')
               .set('Authorization', token)
               .send(newInvite);
@@ -642,7 +642,7 @@ describe('server.js', () => {
           guest_id: 2,
           potluck_id: 1
         };
-        const res = request(server)
+        const res = await request(server)
               .post('/api/invites')
               .set('Authorization', token)
               .send(newInvite);
