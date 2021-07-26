@@ -24,10 +24,9 @@ const loginMiddleware = [
   validateCredentials
 ];
 
-router.post('/login', loginMiddleware, (req, res, next) => {
-  next({
-    status: 404,
-    message: 'Not implemented'
+router.post('/login', loginMiddleware, ({user}, res, next) => {
+  res.json({
+    message: `Welcome back ${user.username}!`
   });
 });
 
