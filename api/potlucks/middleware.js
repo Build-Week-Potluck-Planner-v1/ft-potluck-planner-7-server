@@ -15,9 +15,7 @@ exports.validatePotluck = (req, res, next) => {
 
 exports.validateType = (req, res, next) => {
   const {body: {name, date, location}} = req;
-  console.log('date:', date);
   const dateChecked = Date.parse(date);
-  console.log('dateChecked:', dateChecked);
   if (typeof name === 'string' && typeof location === 'string' && !isNaN(dateChecked)){
     const newDate = new Date(dateChecked);
     req.body.date = newDate.toISOString();
