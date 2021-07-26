@@ -18,3 +18,31 @@ describe('getByUsername', () => {
   });
 
 });
+
+describe('add', () => {
+
+  it('adds a user to the db', async () => {
+    const before = await db('users')
+          .where({
+            username: 'test'
+          })
+          .first();
+    expect(before).toBe(undefined);
+
+    await Users.add({
+      username: 'test',
+      password: '1234'
+    });
+
+    const after = await db('users')
+          .where({
+            username: 'test'
+          })
+          .first();
+    expect(after).toMatchObject({
+      username: 'test'
+    });
+  });
+
+  it.todo('returns added user');
+});
