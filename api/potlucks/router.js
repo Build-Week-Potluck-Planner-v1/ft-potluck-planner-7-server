@@ -2,8 +2,13 @@ const router = require('express').Router();
 const {
   validatePotluck,
   validateType,
+  validateTypePut,
   addPotluck,
-  getPotlucks
+  getPotlucks,
+  validatePut,
+  checkPotluckExists,
+  checkUserIsOwner,
+  updatePotluck
 } = require ('./middleware');
 
 router.get('/', getPotlucks, (req, res, next) => {
@@ -12,6 +17,14 @@ router.get('/', getPotlucks, (req, res, next) => {
 
 router.post('/', validatePotluck, validateType, addPotluck, (req, res, next) => {
   res.status(201).json(req.potluck);
+});
+
+const putMiddleware = [
+  validatePut, validateTypePut, checkPotluckExists, checkUserIsOwner, updatePotluck
+];
+
+router.put('/:id', putMiddleware, (req, res, next) => {
+  res.json(req.updated);
 });
 
 module.exports = router;

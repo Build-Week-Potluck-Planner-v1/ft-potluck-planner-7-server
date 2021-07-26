@@ -380,7 +380,7 @@ describe('server.js', () => {
               });
         expect(res.status).toBe(400);
         expect(res.body.message).toBe(
-          'Name and location should be strings, date should be an iso date string');
+          'name, date, time and location should all be strings');
       });
 
       it('Adds potluck to db', async () => {
@@ -477,7 +477,228 @@ describe('server.js', () => {
       });
 
     });
-    describe('[PUT] /api/potlucks/:id', () => {});
+
+    describe('[PUT] /api/potlucks/:id', () => {
+
+      it('Responds with a 401 and a message when given no token', async () => {
+        const res = await request(server)
+              .put('/api/potlucks/1')
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('No token given');
+      });
+
+      it('Responds with a 401 when given bad token', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const badToken = token.substring(0,15) + 'a' + token.substring(16);
+        const res = await request(server)
+              .put('/api/potlucks/1')
+              .set('Authorization', badToken)
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Bad token given');
+      });
+
+      it('Responds with 400 and a message on missing information', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .put('/api/potlucks/1')
+              .set('Authorization', token)
+              .send({});
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'Please provide a date, time and location for the potluck'
+        );
+      });
+
+      it('Responds with 400 and a message when data is incorrectly typed', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .put('/api/potlucks/1')
+              .set('Authorization', token)
+              .send({
+                date: 'next tuesday',
+                time: 1,
+                location: 'right here'
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'date, time and location should all be strings');
+      });
+
+      it('only allows owner to update', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        {
+          const {body: {token}} = await request(server)
+                .post('/api/auth/login')
+                .send({
+                  username: 'test1',
+                  password: '1234'
+                });
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+        }
+
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test2',
+                password: '1234'
+              });
+        const newBonanza = {
+          date: 'July 28',
+          time: '9am',
+          location: 'over there'
+        };
+        const res = await request(server)
+              .put('/api/potlucks/1')
+              .set('Authorization', token)
+              .send(newBonanza);
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Only the owner of the potluck is allowed to update it');
+      });
+
+      it('only allows existing potlucks to be updated', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .put('/api/potlucks/1')
+              .set('Authorization', token)
+              .send({
+                date: 'next tuesday',
+                time: '1pm',
+                location: 'right here'
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'Potluck with given id does not exist');
+      });
+
+      it('Updates potluck in db', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        await request(server)
+          .post('/api/potlucks')
+          .set('Authorization', token)
+          .send(bigBonanza);
+
+        const newBonanza = {
+          date: 'July 28',
+          time: '9am',
+          location: 'over there'
+        };
+        await request(server)
+          .put('/api/potlucks/1')
+          .set('Authorization', token)
+          .send(newBonanza);
+        const expected = [
+          {...bigBonanza, ...newBonanza}
+        ];
+        const actual = await db('potlucks');
+        expect(actual).toMatchObject(expected);
+      });
+
+      it('Responds with 200 on good post', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        await request(server)
+          .post('/api/potlucks')
+          .set('Authorization', token)
+          .send(bigBonanza);
+        const newBonanza = {
+          date: 'July 28',
+          time: '9am',
+          location: 'over there'
+        };
+        const res = await request(server)
+              .put('/api/potlucks/1')
+              .set('Authorization', token)
+              .send(newBonanza);
+        expect(res.status).toBe(200);
+      });
+
+      it('Responds with created potluck on good post', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        await request(server)
+          .post('/api/potlucks')
+          .set('Authorization', token)
+          .send(bigBonanza);
+        const newBonanza = {
+          date: 'July 28',
+          time: '9am',
+          location: 'over there'
+        };
+        const res = await request(server)
+              .put('/api/potlucks/1')
+              .set('Authorization', token)
+              .send(newBonanza);
+        expect(res.body).toMatchObject({
+          ...bigBonanza,
+          ...newBonanza,
+          id: 1,
+          owner_id: 1
+        });
+      });
+
+    });
+
     describe('[DELETE] /api/potlucks/:id', () => {});
 
   });

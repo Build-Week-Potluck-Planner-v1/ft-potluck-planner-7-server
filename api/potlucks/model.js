@@ -18,3 +18,15 @@ exports.add = (potluck) => {
       return added;
     });
 };
+
+exports.getByIdAndOwner = (id, owner_id) => {
+  return db('potlucks')
+    .where({id, owner_id})
+    .first();
+};
+
+exports.update = (id, potluck) => {
+  return db('potlucks')
+    .where({id})
+    .update(potluck, ['id', 'owner_id', 'name', 'date', 'time', 'location']);
+};
