@@ -1,6 +1,7 @@
 const request = require('supertest');
 const server = require('./server');
 const db = require('./data/db-config');
+const bcrypt = require('bcryptjs');
 
 beforeAll(async () => {
   await db.migrate.rollback();
@@ -75,7 +76,19 @@ describe('server.js', () => {
         });
       });
 
-      it.todo('Hashes the password before saving');
+      it('Hashes the password before saving', async () => {
+        await request(server)
+          .post('/api/auth/register')
+          .send({
+            username: 'test',
+            password: '1234'
+          });
+        const { password } = await db('users')
+              .where({id: 5})
+              .first();
+        expect(bcrypt.compareSync('1234', password)).toBe(true);
+      });
+
       it.todo('Responds with 201 on good register');
       it.todo('Responds with user id and username on good register');
     });
