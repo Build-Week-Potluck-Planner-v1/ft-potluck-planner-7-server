@@ -12,5 +12,9 @@ describe('getByUsername', () => {
     });
   });
 
-  it.todo('returns nothing when user doesnt');
+  it('returns nothing when user doesnt', async () => {
+    const user = await Users.getByUsername('NotInDatabase');
+    expect(user).toBe(undefined);
+  });
+
 });
