@@ -5,6 +5,12 @@ exports.getByOwner = (owner_id) => {
     .where({owner_id});
 };
 
+exports.getById = (id) => {
+  return db('potlucks')
+    .where({id})
+    .first();
+};
+
 exports.add = (potluck) => {
   return db('potlucks')
     .insert(potluck, ['id', 'owner_id', 'name', 'date', 'time', 'location'])
