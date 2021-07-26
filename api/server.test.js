@@ -216,12 +216,6 @@ describe('server.js', () => {
 
   });
 
-  describe('restricted middleware', () => {
-
-    it.todo('responds with a 401 and a message when no token is given');
-
-  });
-
   describe('potlucks', () => {
 
     describe('[GET] /api/potlucks', () => {}); // for a nicer splash/display screen
@@ -243,7 +237,7 @@ describe('server.js', () => {
                 username: 'test1',
                 password: '1234'
               });
-        const badToken = token.substring(0,5) + 'a' + token.substring(6);
+        const badToken = token.substring(0,15) + 'a' + token.substring(16);
         const res = await request(server)
               .post('/api/potlucks')
               .set('Authorization', badToken)
@@ -251,7 +245,24 @@ describe('server.js', () => {
         expect(res.status).toBe(401);
         expect(res.body.message).toBe('Bad token given');
       });
-      it.todo('Responds with 400 and a message when missing name, date, time or location');
+
+      it('Responds with 400 and a message on missing information', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send({});
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'Please provide a name, date, time and location for the potluck'
+        );
+      });
+
       it.todo('Responds with 400 and a message when data is incorrectly typed');
       it.todo('Adds potluck to db');
       it.todo('Correctly associates potluck with user specified in token');
