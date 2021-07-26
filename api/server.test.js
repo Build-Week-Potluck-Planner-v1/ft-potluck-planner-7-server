@@ -99,7 +99,18 @@ describe('server.js', () => {
         expect(res.status).toBe(201);
       });
 
-      it.todo('Responds with user id and username on good register');
+      it('Responds with user id and username on good register', async () => {
+        const res = await request(server)
+              .post('/api/auth/register')
+              .send({
+                username: 'test',
+                password: '1234'
+              });
+        expect(res.body).toMatchObject({
+          id: 5,
+          username: 'test'
+        });
+      });
     });
 
   });
