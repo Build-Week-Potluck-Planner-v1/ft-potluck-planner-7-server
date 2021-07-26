@@ -3,8 +3,11 @@ const {
   validateBody,
   validateType,
   checkUsernameFree,
+  checkUsernameExists,
+  validateCredentials,
   hashPassword,
-  addUser
+  addUser,
+  generateToken
 } = require('./middleware');
 
 const registerMiddleware = [
@@ -18,13 +21,14 @@ router.post('/register', registerMiddleware, (req, res, next) => {
 
 
 const loginMiddleware = [
-  validateBody, validateType
+  validateBody, validateType, checkUsernameExists,
+  validateCredentials, generateToken
 ];
 
-router.post('/login', loginMiddleware, (req, res, next) => {
-  next({
-    status: 404,
-    message: 'Not implemented'
+router.post('/login', loginMiddleware, ({user, token}, res, next) => {
+  res.json({
+    message: `Welcome back, ${user.username}!`,
+    token
   });
 });
 
