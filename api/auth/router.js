@@ -13,8 +13,7 @@ const registerMiddleware = [
 ];
 
 router.post('/register', registerMiddleware, (req, res, next) => {
-  next({
-    status: 404,
+  res.status(201).json({
     message: 'Not implemented'
   });
 });

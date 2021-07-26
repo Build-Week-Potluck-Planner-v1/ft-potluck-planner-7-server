@@ -45,7 +45,12 @@ exports.hashPassword = (req, res, next) => {
   next();
 };
 
-exports.addUser = ({body: { username, password } }, res, next) => {
+exports.addUser = (req, res, next) => {
+  const { username, password } = req.body;
   Users.add({ username, password })
-    .then(next);
+    .then(newUser => {
+      req.newUser = newUser;
+      next();
+    })
+    .catch(next);
 };
