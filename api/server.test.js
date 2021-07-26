@@ -235,7 +235,22 @@ describe('server.js', () => {
         expect(res.status).toBe(401);
         expect(res.body.message).toBe('No token given');
       });
-      it.todo('Responds with a 401 when given bad token');
+
+      it('Responds with a 401 when given bad token', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const badToken = token.substring(0,5) + 'a' + token.substring(6);
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', badToken)
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Bad token given');
+      });
       it.todo('Responds with 400 and a message when missing name, date, time or location');
       it.todo('Responds with 400 and a message when data is incorrectly typed');
       it.todo('Adds potluck to db');

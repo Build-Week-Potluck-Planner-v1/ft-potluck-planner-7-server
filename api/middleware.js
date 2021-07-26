@@ -7,7 +7,7 @@ exports.restricted = (req, res, next) => {
       if (err) {
         next({
           status: 401,
-          message: err.message
+          message: 'Bad token given'
         });
       } else {
         next();
