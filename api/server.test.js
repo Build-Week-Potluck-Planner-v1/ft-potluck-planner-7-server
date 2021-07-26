@@ -486,7 +486,171 @@ describe('server.js', () => {
 
     describe('[GET] /api/invites', () => {});
     describe('[GET] /api/invites/:id', () => {});
-    describe('[POST] /api/invites', () => {});
+    describe('[POST] /api/invites', () => {
+
+      it('Responds with a 401 and a message when given no token', async () => {
+        const res = await request(server)
+              .post('/api/invites')
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('No token given');
+      });
+
+      it('Responds with a 401 when given bad token', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const badToken = token.substring(0,15) + 'a' + token.substring(16);
+        const res = await request(server)
+              .post('/api/invites')
+              .set('Authorization', badToken)
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Bad token given');
+      });
+
+      it('Responds with 400 and a message on missing information', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/invites')
+              .set('Authorization', token)
+              .send({});
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'Please provide a guest_id and potluck_id for the invite'
+        );
+      });
+
+      it('Responds with 400 and a message when data is incorrectly typed', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/invites')
+              .set('Authorization', token)
+              .send({
+                potluck_id: 'not an integer',
+                guest_id: 'also not an integer'
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'potluck_id and guest_id should be positive integers');
+      });
+
+      it.todo('Only allows existing users to be invited');
+      it.todo('Only allows owner to invite guests');
+      it.todo('Only allows non-invited users to be invited');
+
+      it('Adds invite to db', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+
+        {
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+        } // adding potluck to invite test2 to
+
+        const newInvite = {
+          guest_id: 2,
+          potluck_id: 1
+        };
+        await request(server)
+          .post('/api/invites')
+          .set('Authorization', token)
+          .send(newInvite);
+        const expected = [
+          newInvite
+        ];
+        const actual = await db('users_potlucks');
+        expect(actual).toMatchObject(expected);
+      });
+
+      it('Responds with 201 on good post', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+
+        {
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+        }
+
+        const newInvite = {
+          guest_id: 2,
+          potluck_id: 1
+        };
+        const res = request(server)
+              .post('/api/invites')
+              .set('Authorization', token)
+              .send(newInvite);
+        expect(res.status).toBe(201);
+      });
+
+      it('Responds with created invite on good post', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        await request(server)
+          .post('/api/potlucks')
+          .set('Authorization', token)
+          .send(bigBonanza);
+
+        const newInvite = {
+          guest_id: 2,
+          potluck_id: 1
+        };
+        const res = request(server)
+              .post('/api/invites')
+              .set('Authorization', token)
+              .send(newInvite);
+        expect(res.body).toMatchObject(newInvite);
+      });
+
+    });
+
     describe('[PUT] /api/invites/:id', () => {});
     describe('[DELETE] /api/invites/:id', () => {});
 
