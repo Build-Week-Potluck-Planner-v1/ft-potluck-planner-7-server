@@ -4,6 +4,10 @@ const cors = require('cors');
 const db = require('./data/db-config');
 
 const authRouter = require('./auth/router');
+const potluckRouter = require('./potlucks/router');
+const {
+  restricted
+} = require('./middleware');
 // function getAllUsers() { return db('users') }
 
 // async function insertUser(user) {
@@ -20,6 +24,7 @@ server.use(helmet());
 server.use(cors());
 
 server.use('/api/auth', authRouter);
+server.use('/api/potlucks', potluckRouter);
 // server.get('/api/users', async (req, res) => {
 //   res.json(await getAllUsers())
 // })

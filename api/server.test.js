@@ -212,7 +212,7 @@ describe('server.js', () => {
     describe('[GET] /api/users', () => {}); // for a nicer invite list
     describe('[PUT] /api/users', () => {
     }); // literally just for updating passwords
-    describe('[DELETE] /api/users'); // only a user should be able to delete their own account and maybe an admin
+    describe('[DELETE] /api/users', () => {}); // only a user should be able to delete their own account and maybe an admin
 
   });
 
@@ -226,7 +226,7 @@ describe('server.js', () => {
 
     describe('[GET] /api/potlucks', () => {}); // for a nicer splash/display screen
     describe('[GET] /api/potlucks/:id', () => {});
-    describe('[POST] /api/potlucks', async () => {
+    describe('[POST] /api/potlucks', () => {
 
       it.todo('Responds with a 401 when given no token');
       it.todo('Responds with a 401 when given bad token');
