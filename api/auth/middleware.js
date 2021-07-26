@@ -25,6 +25,16 @@ exports.validateType = ({ body: { username, password } }, res, next) => {
 };
 
 exports.checkUsernameFree = ({ body: { username, password } }, res, next) => {
-  console.log('checkUsernameFree wired');
-  next();
+  Users.getByUsername(username)
+    .then(user => {
+      if (user) {
+        next({
+          status: 400,
+          message: 'Username already exists'
+        });
+      } else {
+        next();
+      }
+    })
+    .catch(next);
 };
