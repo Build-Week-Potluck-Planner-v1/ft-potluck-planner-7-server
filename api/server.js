@@ -24,7 +24,7 @@ server.use(helmet());
 server.use(cors());
 
 server.use('/api/auth', authRouter);
-server.use('/api/potlucks', potluckRouter);
+server.use('/api/potlucks', restricted, potluckRouter);
 // server.get('/api/users', async (req, res) => {
 //   res.json(await getAllUsers())
 // })

@@ -229,7 +229,7 @@ describe('server.js', () => {
     describe('[POST] /api/potlucks', () => {
 
       it('Responds with a 401 and a message when given no token', async () => {
-        const res = request(server)
+        const res = await request(server)
               .post('/api/potlucks')
               .send({});
         expect(res.status).toBe(401);
