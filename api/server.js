@@ -6,6 +6,7 @@ const db = require('./data/db-config');
 const authRouter = require('./auth/router');
 const potluckRouter = require('./potlucks/router');
 const inviteRouter = require('./invites/router');
+const foodRouter = require('./foods/router');
 const {
   restricted
 } = require('./middleware');
@@ -27,6 +28,7 @@ server.use(cors());
 server.use('/api/auth', authRouter);
 server.use('/api/potlucks', restricted, potluckRouter);
 server.use('/api/invites', restricted, inviteRouter);
+server.use('/api/foods', restricted, foodRouter);
 // server.get('/api/users', async (req, res) => {
 //   res.json(await getAllUsers())
 // })
