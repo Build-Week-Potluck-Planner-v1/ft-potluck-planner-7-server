@@ -1181,7 +1181,7 @@ describe('server.js', () => {
               .send({});
         expect(res.status).toBe(400);
         expect(res.body.message).toBe(
-          'Please provide a name for the food'
+          'Please provide a name for the food item'
         );
       });
 
