@@ -1,3 +1,5 @@
+const Foods = require('./model');
+
 exports.validateFood = (req, res, next) => {
   const {body: {name}} = req;
   if (name) {
@@ -20,4 +22,13 @@ exports.validateType = ({body: {name}}, res, next) => {
       message: 'name should be a string'
     });
   }
+};
+
+exports.addFood = (req, res, next) => {
+  Foods.add(req.body)
+    .then(returnVal => {
+      console.log(returnVal);
+      next();
+    })
+    .catch(next);
 };

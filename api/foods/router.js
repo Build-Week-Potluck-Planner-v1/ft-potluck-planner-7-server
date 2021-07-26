@@ -1,10 +1,11 @@
 const router = require('express').Router();
 const {
   validateFood,
-  validateType
+  validateType,
+  addFood
 } = require('./middleware');
 
-router.post('/', validateFood, validateType, (req, res, next) => {
+router.post('/', validateFood, validateType, addFood, (req, res, next) => {
   next({
     status: 404,
     message: 'Not implemented'
