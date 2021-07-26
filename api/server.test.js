@@ -1139,4 +1139,127 @@ describe('server.js', () => {
     describe('[DELETE] /api/invites/:id', () => {});
 
   });
+
+  describe('foods', () => {
+
+    describe('[POST] /api/foods', () => {
+
+      it('Responds with a 401 and a message when given no token', async () => {
+        const res = await request(server)
+              .post('/api/foods')
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('No token given');
+      });
+
+      it('Responds with a 401 when given bad token', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const badToken = token.substring(0,15) + 'a' + token.substring(16);
+        const res = await request(server)
+              .post('/api/foods')
+              .set('Authorization', badToken)
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Bad token given');
+      });
+
+      it('Responds with 400 and a message on missing information', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/foods')
+              .set('Authorization', token)
+              .send({});
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'Please provide a name for the food'
+        );
+      });
+
+      it('Responds with 400 and a message when data is incorrectly typed', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/foods')
+              .set('Authorization', token)
+              .send({
+                name: 1
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'name should be a string');
+      });
+
+      it('Adds food to db', async () => {
+        const hotDogs = {
+          name: 'hot dogs',
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/foods')
+              .set('Authorization', token)
+              .send(hotDogs);
+        const expected = [
+          hotDogs
+        ];
+        const actual = await db('foods');
+        expect(actual).toMatchObject(expected);
+      });
+
+      it('Responds with 201 on good post', async () => {
+        const hotDogs = {
+          name: 'hot dogs',
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/foods')
+              .set('Authorization', token)
+              .send(hotDogs);
+        expect(res.status).toBe(201);
+      });
+
+      it('Responds with created potluck on good post', async () => {
+        const hotDogs = {
+          name: 'hot dogs',
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/foods')
+              .set('Authorization', token)
+              .send(hotDogs);
+        expect(res.body).toMatchObject(hotDogs);
+      });
+
+    });
+
+  });
+
 });
