@@ -3,10 +3,16 @@ const {
   validateBody,
   validateType,
   checkUsernameFree,
+  hashPassword,
   addUser
 } = require('./middleware');
 
-router.post('/register', validateBody, validateType, checkUsernameFree, addUser, (req, res, next) => {
+const registerMiddleware = [
+  validateBody, validateType, checkUsernameFree,
+  hashPassword, addUser
+];
+
+router.post('/register', registerMiddleware, (req, res, next) => {
   next({
     status: 404,
     message: 'Not implemented'

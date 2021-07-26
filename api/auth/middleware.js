@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const Users = require('./model');
 
 exports.validateBody = (req, res, next) => {
@@ -37,6 +38,11 @@ exports.checkUsernameFree = ({ body: { username, password } }, res, next) => {
       }
     })
     .catch(next);
+};
+
+exports.hashPassword = ({body: { username, password }}, res, next) => {
+  console.log('hashPassword wired');
+  next();
 };
 
 exports.addUser = ({body: { username, password } }, res, next) => {
