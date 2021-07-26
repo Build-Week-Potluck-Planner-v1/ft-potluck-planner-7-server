@@ -206,4 +206,24 @@ describe('server.js', () => {
     });
 
   });
+
+  describe('potlucks', () => {
+
+    describe('[GET] /api/potlucks', () => {});
+    describe('[GET] /api/potlucks/:id', () => {});
+    describe('[POST] /api/potlucks', () => {});
+    describe('[PUT] /api/potlucks/:id', () => {});
+    describe('[DELETE] /api/potlucks/:id', () => {});
+
+  });
+
+  describe('invites', () => {
+
+    describe('[GET] /api/invites', () => {});
+    describe('[GET] /api/invites/:id', () => {});
+    describe('[POST] /api/invites', () => {});
+    describe('[PUT] /api/invites/:id', () => {});
+    describe('[DELETE] /api/invites/:id', () => {});
+
+  });
 });

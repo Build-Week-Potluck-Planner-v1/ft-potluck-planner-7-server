@@ -28,7 +28,11 @@ const loginMiddleware = [
 router.post('/login', loginMiddleware, ({user, token}, res, next) => {
   res.json({
     message: `Welcome back, ${user.username}!`,
-    token
+    token,
+    user: {
+      id: user.id,
+      username: user.username
+    }
   });
 });
 
