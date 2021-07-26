@@ -271,9 +271,9 @@ describe('server.js', () => {
                 password: '1234'
               });
         await request(server)
-              .post('/api/potlucks')
-              .set('Authorization', token)
-              .send(bigBonanza);
+          .post('/api/potlucks')
+          .set('Authorization', token)
+          .send(bigBonanza);
         const res = await request(server)
               .get('/api/potlucks')
               .set('Authorization', token);
@@ -282,6 +282,38 @@ describe('server.js', () => {
           id: 1,
           owner_id: 1
         }]);
+      });
+
+      it('Doesnt show other users potlucks', async () => {
+        {
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test2',
+                password: '1234'
+              });
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+        } // setup block keeps token in block scope
+
+        const {body: {token}} = await request(server)
+          .post('/api/auth/login')
+          .send({
+            username: 'test1',
+            password: '1234'
+          });
+        const res = await request(server)
+              .get('/api/potlucks')
+              .set('Authorization', token);
+        expect(res.body).toMatchObject([]);
       });
 
     }); // for a nicer splash/display screen
