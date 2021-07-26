@@ -107,8 +107,8 @@ exports.checkUserIsOwner = (req, res, next) => {
 
 exports.updatePotluck = (req, res, next) => {
   Potlucks.update(req.params.id, req.body)
-    .then(returnVal => {
-      console.log(returnVal);
+    .then(([updated]) => {
+      req.updated = updated;
       next();
     })
     .catch(next);
