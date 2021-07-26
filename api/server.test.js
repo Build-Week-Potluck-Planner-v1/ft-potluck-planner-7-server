@@ -56,7 +56,24 @@ describe('server.js', () => {
         expect(res.body.message).toBe('Username already exists');
       });
 
-      it.todo('Adds a new user to the system');
+      it('Adds a new user to the system', async () => {
+        await request(server)
+              .post('/api/auth/register')
+              .send({
+                username: 'test',
+                password: '1234'
+              });
+        const added = await db('users')
+              .where({
+                username: 'test'
+              })
+              .first();
+        expect(added).toMatchObject({
+          username: 'test',
+        });
+      });
+
+      it.todo('Hashes the password before saving');
       it.todo('Responds with 201 on good register');
       it.todo('Responds with user id and username on good register');
     });
