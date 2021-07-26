@@ -95,3 +95,13 @@ exports.addInvite = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getInvites = (req, res, next) => {
+  const {user: {id}} = req;
+  Invites.getByGuest(id)
+    .then(invites => {
+      req.invites = invites;
+      next();
+    })
+    .catch(next);
+};

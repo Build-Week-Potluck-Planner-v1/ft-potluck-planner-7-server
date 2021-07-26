@@ -6,8 +6,13 @@ const {
   checkPotluckExists,
   checkUserIsOwner,
   checkInviteExists,
-  addInvite
+  addInvite,
+  getInvites
 } = require('./middleware');
+
+router.get('/', getInvites, ({invites}, res, next) => {
+  res.json(invites);
+});
 
 const postMiddleware = [
   validateInvite, validateType, checkGuestExists, checkPotluckExists,

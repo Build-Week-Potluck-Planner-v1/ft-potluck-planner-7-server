@@ -484,7 +484,128 @@ describe('server.js', () => {
 
   describe('invites', () => {
 
-    describe('[GET] /api/invites', () => {});
+    describe('[GET] /api/invites', () => {
+
+      it('Responds with a 401 and a message when given no token', async () => {
+        const res = await request(server)
+              .get('/api/invites');
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('No token given');
+      });
+
+      it('Responds with a 401 when given bad token', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const badToken = token.substring(0,15) + 'a' + token.substring(16);
+        const res = await request(server)
+              .get('/api/invites')
+              .set('Authorization', badToken);
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Bad token given');
+      });
+
+      it.todo('Doesnt effect db');
+
+      it('Responds with 200 on good get', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .get('/api/invites')
+              .set('Authorization', token);
+        expect(res.status).toBe(200);
+      });
+
+      it('Responds with users invites on good get', async () => {
+        {
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          const {body: {token}} = await request(server)
+                .post('/api/auth/login')
+                .send({
+                  username: 'test1',
+                  password: '1234'
+                });
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+          await request(server)
+            .post('/api/invites')
+            .set('Authorization', token)
+            .send({
+              potluck_id: 1,
+              guest_id: 2
+            });
+        }
+
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test2',
+                password: '1234'
+              });
+        const res = await request(server)
+              .get('/api/invites')
+              .set('Authorization', token);
+        expect(res.body).toMatchObject([{
+          potluck_id: 1,
+          guest_id: 2
+        }]);
+      });
+
+      it('Doesnt show other users invites', async () => {
+        {
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          const {body: {token}} = await request(server)
+                .post('/api/auth/login')
+                .send({
+                  username: 'test1',
+                  password: '1234'
+                });
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+          await request(server)
+            .post('/api/invites')
+            .set('Authorization', token)
+            .send({
+              potluck_id: 1,
+              guest_id: 2
+            });
+        }
+
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test3',
+                password: '1234'
+              });
+        const res = await request(server)
+              .get('/api/invites')
+              .set('Authorization', token);
+        expect(res.body).toMatchObject([]);
+      });
+
+    });
+
     describe('[GET] /api/invites/:id', () => {});
     describe('[POST] /api/invites', () => {
 
@@ -504,7 +625,7 @@ describe('server.js', () => {
                 password: '1234'
               });
         const badToken = token.substring(0,15) + 'a' + token.substring(16);
-        const res = await request(server)
+        const res = await request(server)
               .post('/api/invites')
               .set('Authorization', badToken)
               .send({});
