@@ -1,5 +1,6 @@
 const Invites = require('./model');
 const Users = require('../auth/model');
+const Potlucks = require('../potlucks/model');
 
 exports.validateInvite = (req, res, next) => {
   const {body: {guest_id, potluck_id}} = req;
@@ -40,6 +41,21 @@ exports.checkGuestExists = ({body: {guest_id}}, res, next) => {
         next({
           status: 400,
           message: 'Only existing users can be invited'
+        });
+      }
+    })
+    .catch(next);
+};
+
+exports.checkPotluckExists = ({body: {potluck_id}}, res, next) => {
+  Potlucks.getById(potluck_id)
+    .then(potluck => {
+      if (potluck) {
+        next();
+      } else {
+        next({
+          status: 400,
+          message: 'Only existing potlucks can be invited to'
         });
       }
     })

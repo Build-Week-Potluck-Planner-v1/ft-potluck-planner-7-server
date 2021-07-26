@@ -567,21 +567,53 @@ describe('server.js', () => {
             .post('/api/potlucks')
             .set('Authorization', token)
             .send(bigBonanza);
-        } // adding potluck to invite test2 to
+        }
 
         const newInvite = {
           guest_id: 25,
           potluck_id: 1
         };
         const res = await request(server)
-          .post('/api/invites')
-          .set('Authorization', token)
-          .send(newInvite);
+              .post('/api/invites')
+              .set('Authorization', token)
+              .send(newInvite);
         expect(res.status).toBe(400);
         expect(res.body.message).toBe('Only existing users can be invited');
       });
 
-      it.todo('Only allows existing potlucks to be invited to');
+      it('Only allows existing potlucks to be invited to', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+
+        {
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+        }
+
+        const newInvite = {
+          guest_id: 2,
+          potluck_id: 5
+        };
+        const res = await request(server)
+              .post('/api/invites')
+              .set('Authorization', token)
+              .send(newInvite);
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe('Only existing potlucks can be invited to');
+      });
+
       it.todo('Only allows owner to invite guests');
       it.todo('Only allows non-invited users to be invited');
 
@@ -610,7 +642,7 @@ describe('server.js', () => {
           guest_id: 2,
           potluck_id: 1
         };
-        await request(server)
+        const res = await request(server)
           .post('/api/invites')
           .set('Authorization', token)
           .send(newInvite);
