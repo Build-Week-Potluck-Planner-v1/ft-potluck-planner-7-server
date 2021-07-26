@@ -282,7 +282,30 @@ describe('server.js', () => {
         expect(res.body.message).toBe(
           'Name and location should be strings, date should be an iso date string');
       });
-      it.todo('Adds potluck to db');
+
+      it('Adds potluck to db', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: '2021-07-25T22:59:30',
+          location: 'right here'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send(bigBonanza);
+        const expected = [
+          bigBonanza
+        ];
+        const actual = await db('potlucks');
+        expect(actual).toMatchObject(expected);
+      });
+
       it.todo('Correctly associates potluck with user specified in token');
       it.todo('Responds with 201 on good post');
       it.todo('Responds with created potluck on good post');
