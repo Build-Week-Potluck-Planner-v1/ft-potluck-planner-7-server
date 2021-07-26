@@ -1,5 +1,9 @@
 const bcrypt = require('bcryptjs');
 const Users = require('./model');
+const jwt = require('jsonwebtoken');
+const {
+  jwtSecret
+} = require('./secret');
 
 exports.validateBody = (req, res, next) => {
   const { username, password } = req.body;
@@ -57,17 +61,6 @@ exports.checkUsernameExists = (req, res, next) => {
     .catch(next);
 };
 
-exports.validateCredentials = ({user, body: {password}}, res, next) => {
-  passwordValid = bcrypt.compareSync(password, user.password);
-  if (passwordValid) {
-    next();
-  } else {
-    next({
-      status: 400,
-      message: 'Invalid Credentials'
-    });
-  }
-};
 
 exports.hashPassword = (req, res, next) => {
   req.body.password = bcrypt.hashSync(req.body.password, 8);
@@ -82,4 +75,28 @@ exports.addUser = (req, res, next) => {
       next();
     })
     .catch(next);
+};
+
+exports.validateCredentials = ({user, body: {password}}, res, next) => {
+  passwordValid = bcrypt.compareSync(password, user.password);
+  if (passwordValid) {
+    next();
+  } else {
+    next({
+      status: 400,
+      message: 'Invalid Credentials'
+    });
+  }
+};
+
+exports.generateToken = (req, res, next) => {
+  const payload = {
+    id: req.user.id,
+    username: req.user.username
+  };
+  const options = {
+    expiresIn: '1d'
+  };
+  req.token = jwt.sign(payload, jwtSecret, options);
+  next();
 };

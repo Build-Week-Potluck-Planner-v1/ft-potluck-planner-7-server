@@ -6,7 +6,8 @@ const {
   checkUsernameExists,
   validateCredentials,
   hashPassword,
-  addUser
+  addUser,
+  generateToken
 } = require('./middleware');
 
 const registerMiddleware = [
@@ -21,12 +22,13 @@ router.post('/register', registerMiddleware, (req, res, next) => {
 
 const loginMiddleware = [
   validateBody, validateType, checkUsernameExists,
-  validateCredentials
+  validateCredentials, generateToken
 ];
 
-router.post('/login', loginMiddleware, ({user}, res, next) => {
+router.post('/login', loginMiddleware, ({user, token}, res, next) => {
   res.json({
-    message: `Welcome back ${user.username}!`
+    message: `Welcome back, ${user.username}!`,
+    token
   });
 });
 
