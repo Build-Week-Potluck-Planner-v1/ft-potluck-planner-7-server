@@ -21,7 +21,6 @@ describe('getByUsername', () => {
     expect(user).toMatchObject({
       id: 1,
       username: 'test1',
-      password: '1234',
     });
   });
 
