@@ -308,7 +308,31 @@ describe('server.js', () => {
         expect(actual).toMatchObject(expected);
       });
 
-      it.todo('Correctly associates potluck with user specified in token');
+      it('Correctly associates potluck with user specified in token', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send(bigBonanza);
+        const expected = [
+          { owner_id: 1 }
+        ];
+        const actual = await db('potlucks')
+              .select('owner_id');
+        expect(actual).toMatchObject(expected);
+      });
+
       it.todo('Responds with 201 on good post');
       it.todo('Responds with created potluck on good post');
 
