@@ -259,11 +259,29 @@ describe('server.js', () => {
               .send({});
         expect(res.status).toBe(400);
         expect(res.body.message).toBe(
-          'Please provide a name, date, time and location for the potluck'
+          'Please provide a name, date and location for the potluck'
         );
       });
 
-      it.todo('Responds with 400 and a message when data is incorrectly typed');
+      it('Responds with 400 and a message when data is incorrectly typed', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send({
+                name: 'big bonanza',
+                date: 'asdf',
+                location: 'right here'
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'Name and location should be strings, date should be an iso date string');
+      });
       it.todo('Adds potluck to db');
       it.todo('Correctly associates potluck with user specified in token');
       it.todo('Responds with 201 on good post');

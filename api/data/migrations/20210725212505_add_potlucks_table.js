@@ -7,8 +7,6 @@ exports.up = function(knex) {
         .notNullable();
       tbl.date('date')
         .notNullable();
-      tbl.time('time')
-        .notNullable();
       tbl.string('location', 256)
         .notNullable();
       tbl.integer('owner_id')
