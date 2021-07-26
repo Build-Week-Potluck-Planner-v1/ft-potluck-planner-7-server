@@ -5,10 +5,9 @@ exports.up = function(knex) {
       tbl.increments();
       tbl.string('name', 256)
         .notNullable();
-      tbl.date('date')
+      tbl.string('date')
         .notNullable();
-      tbl.time('time')
-        .notNullable();
+      tbl.string('time');
       tbl.string('location', 256)
         .notNullable();
       tbl.integer('owner_id')

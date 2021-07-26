@@ -206,4 +206,190 @@ describe('server.js', () => {
     });
 
   });
+
+  describe('users', () => {
+
+    describe('[GET] /api/users', () => {}); // for a nicer invite list
+    describe('[PUT] /api/users', () => {
+    }); // literally just for updating passwords
+    describe('[DELETE] /api/users', () => {}); // only a user should be able to delete their own account and maybe an admin
+
+  });
+
+  describe('potlucks', () => {
+
+    describe('[GET] /api/potlucks', () => {}); // for a nicer splash/display screen
+    describe('[GET] /api/potlucks/:id', () => {});
+    describe('[POST] /api/potlucks', () => {
+
+      it('Responds with a 401 and a message when given no token', async () => {
+        const res = await request(server)
+              .post('/api/potlucks')
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('No token given');
+      });
+
+      it('Responds with a 401 when given bad token', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const badToken = token.substring(0,15) + 'a' + token.substring(16);
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', badToken)
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Bad token given');
+      });
+
+      it('Responds with 400 and a message on missing information', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send({});
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'Please provide a name, date, time and location for the potluck'
+        );
+      });
+
+      it('Responds with 400 and a message when data is incorrectly typed', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send({
+                name: 'big bonanza',
+                date: 'next tuesday',
+                time: 1,
+                location: 'right here'
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'Name and location should be strings, date should be an iso date string');
+      });
+
+      it('Adds potluck to db', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send(bigBonanza);
+        const expected = [
+          bigBonanza
+        ];
+        const actual = await db('potlucks');
+        expect(actual).toMatchObject(expected);
+      });
+
+      it('Correctly associates potluck with user specified in token', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send(bigBonanza);
+        const expected = [
+          { owner_id: 1 }
+        ];
+        const actual = await db('potlucks')
+              .select('owner_id');
+        expect(actual).toMatchObject(expected);
+      });
+
+      it('Responds with 201 on good post', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send(bigBonanza);
+        expect(res.status).toBe(201);
+      });
+
+      it('Responds with created potluck on good post', async () => {
+        const bigBonanza = {
+          name: 'big bonanza',
+          date: 'July 26',
+          time: '7pm',
+          location: 'right here'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .post('/api/potlucks')
+              .set('Authorization', token)
+              .send(bigBonanza);
+        expect(res.body).toMatchObject({
+          ...bigBonanza,
+          id: 1,
+          owner_id: 1
+        });
+      });
+
+    });
+    describe('[PUT] /api/potlucks/:id', () => {});
+    describe('[DELETE] /api/potlucks/:id', () => {});
+
+  });
+
+  describe('invites', () => {
+
+    describe('[GET] /api/invites', () => {});
+    describe('[GET] /api/invites/:id', () => {});
+    describe('[POST] /api/invites', () => {});
+    describe('[PUT] /api/invites/:id', () => {});
+    describe('[DELETE] /api/invites/:id', () => {});
+
+  });
 });
