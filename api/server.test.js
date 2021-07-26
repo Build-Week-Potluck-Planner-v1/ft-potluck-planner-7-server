@@ -89,7 +89,16 @@ describe('server.js', () => {
         expect(bcrypt.compareSync('1234', password)).toBe(true);
       });
 
-      it.todo('Responds with 201 on good register');
+      it('Responds with 201 on good register', async () => {
+        const res = await request(server)
+              .post('/api/auth/register')
+              .send({
+                username: 'test',
+                password: '1234'
+              });
+        expect(res.status).toBe(201);
+      });
+
       it.todo('Responds with user id and username on good register');
     });
 
