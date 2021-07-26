@@ -1,22 +1,10 @@
-# Build Week Scaffolding for Node and PostgreSQL
+## API
 
-## Video Tutorial
+- deployed to heroku at https://ft-potluck-planner-7-server.herokuapp.com/
 
-The following tutorial explains how to set up this project using PostgreSQL and Heroku.
-
-[![Setting up PostgreSQL for Build Week](https://img.youtube.com/vi/kTO_tf4L23I/maxresdefault.jpg)](https://www.youtube.com/watch?v=kTO_tf4L23I)
-
-## Requirements
-
-- [PostgreSQL, pgAdmin 4](https://www.postgresql.org/download/) and [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) installed in your local machine.
-- A Heroku app with the [Heroku PostgreSQL Addon](https://devcenter.heroku.com/articles/heroku-postgresql#provisioning-heroku-postgres) added to it.
-- Development and testing databases created with [pgAdmin 4](https://www.pgadmin.org/docs/pgadmin4/4.29/database_dialog.html).
-
-## Starting a New Project
-
-- Create a new repository using this template, and clone it to your local.
-- Create a `.env` file and follow the instructions inside `knexfile.js`.
-- Fix the scripts inside `package.json` to use your Heroku app.
+- current endpoints are
+  1. [POST] /api/auth/login
+  2. [POST] /api/auth/register
 
 ## Scripts
 
