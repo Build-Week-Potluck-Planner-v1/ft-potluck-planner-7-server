@@ -40,6 +40,21 @@ exports.checkUsernameFree = ({ body: { username, password } }, res, next) => {
     .catch(next);
 };
 
+exports.checkUsernameExists = ({ body: { username, password } }, res, next) => {
+  Users.getByUsername(username)
+    .then(user => {
+      if (user) {
+        next();
+      } else {
+        next({
+          status: 400,
+          message: "Username doesn't exist"
+        });
+      }
+    })
+    .catch(next);
+};
+
 exports.hashPassword = (req, res, next) => {
   req.body.password = bcrypt.hashSync(req.body.password, 8);
   next();
