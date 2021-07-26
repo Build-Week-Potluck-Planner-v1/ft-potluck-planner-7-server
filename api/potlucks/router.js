@@ -6,6 +6,7 @@ const {
   addPotluck,
   getPotlucks,
   validatePut,
+  checkPotluckExists,
   checkUserIsOwner,
   updatePotluck
 } = require ('./middleware');
@@ -19,7 +20,7 @@ router.post('/', validatePotluck, validateType, addPotluck, (req, res, next) => 
 });
 
 const putMiddleware = [
-  validatePut, validateTypePut, checkUserIsOwner, updatePotluck
+  validatePut, validateTypePut, checkPotluckExists, checkUserIsOwner, updatePotluck
 ];
 
 router.put('/:id', putMiddleware, (req, res, next) => {

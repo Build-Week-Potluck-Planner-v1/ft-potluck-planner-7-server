@@ -75,6 +75,21 @@ exports.getPotlucks = (req, res, next) => {
     .catch(next);
 };
 
+exports.checkPotluckExists = (req, res, next) => {
+  Potlucks.getById(req.params.id)
+    .then(potluck => {
+      if (potluck) {
+        next();
+      } else {
+        next({
+          status: 400,
+          message: 'Potluck with given id does not exist'
+        });
+      }
+    })
+    .catch(next);
+};
+
 exports.checkUserIsOwner = (req, res, next) => {
   Potlucks.getByIdAndOwner(req.params.id, req.user.id)
     .then(potluck => {
