@@ -13,6 +13,19 @@ exports.validatePotluck = (req, res, next) => {
   }
 };
 
+exports.validatePut = (req, res, next) => {
+  const {body: {date, time, location}} = req;
+  if (date && time && location) {
+    req.body = {date, time, location};
+    next();
+  } else {
+    next({
+      status: 400,
+      message: 'Please provide a date, time and location for the potluck'
+    });
+  }
+};
+
 exports.validateType = (req, res, next) => {
   const {body: {name, date, time, location}} = req;
   const isString = (obj) => typeof obj === 'string';
