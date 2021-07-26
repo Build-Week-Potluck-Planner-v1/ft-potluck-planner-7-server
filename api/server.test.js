@@ -648,8 +648,8 @@ describe('server.js', () => {
               .post('/api/invites')
               .set('Authorization', token)
               .send(newInvite);
-        expect(res.status).toBe(400);
-        expect(res.body.message).toBe('Only the owner of the potluck can be invite guests');
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Only the owner of the potluck can invite guests');
       });
 
       it.todo('Only allows non-invited users to be invited');

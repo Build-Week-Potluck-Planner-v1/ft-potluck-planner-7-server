@@ -4,12 +4,13 @@ const {
   validateType,
   checkGuestExists,
   checkPotluckExists,
+  checkUserIsOwner,
   addInvite
 } = require('./middleware');
 
 const postMiddleware = [
   validateInvite, validateType, checkGuestExists, checkPotluckExists,
-  addInvite
+  checkUserIsOwner, addInvite
 ];
 
 router.post('/', postMiddleware, ({added}, res, next) => {

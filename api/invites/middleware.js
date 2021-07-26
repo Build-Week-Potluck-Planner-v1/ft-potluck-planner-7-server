@@ -47,10 +47,12 @@ exports.checkGuestExists = ({body: {guest_id}}, res, next) => {
     .catch(next);
 };
 
-exports.checkPotluckExists = ({body: {potluck_id}}, res, next) => {
+exports.checkPotluckExists = (req, res, next) => {
+  const {body: {potluck_id}} = req;
   Potlucks.getById(potluck_id)
     .then(potluck => {
       if (potluck) {
+        req.potluck = potluck;
         next();
       } else {
         next({
@@ -60,6 +62,17 @@ exports.checkPotluckExists = ({body: {potluck_id}}, res, next) => {
       }
     })
     .catch(next);
+};
+
+exports.checkUserIsOwner = ({user, potluck}, res, next) => {
+  if (user.id === potluck.owner_id) {
+    next();
+  } else {
+    next({
+      status: 401,
+      message: 'Only the owner of the potluck can invite guests'
+    });
+  }
 };
 
 exports.addInvite = (req, res, next) => {
