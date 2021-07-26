@@ -207,11 +207,37 @@ describe('server.js', () => {
 
   });
 
+  describe('users', () => {
+
+    describe('[GET] /api/users', () => {}); // for a nicer invite list
+    describe('[PUT] /api/users', () => {
+    }); // literally just for updating passwords
+    describe('[DELETE] /api/users'); // only a user should be able to delete their own account and maybe an admin
+
+  });
+
+  describe('restricted middleware', () => {
+
+    it.todo('responds with a 401 and a message when no token is given');
+
+  });
+
   describe('potlucks', () => {
 
-    describe('[GET] /api/potlucks', () => {});
+    describe('[GET] /api/potlucks', () => {}); // for a nicer splash/display screen
     describe('[GET] /api/potlucks/:id', () => {});
-    describe('[POST] /api/potlucks', () => {});
+    describe('[POST] /api/potlucks', async () => {
+
+      it.todo('Responds with a 401 when given no token');
+      it.todo('Responds with a 401 when given bad token');
+      it.todo('Responds with 400 and a message when missing name, date, time or location');
+      it.todo('Responds with 400 and a message when data is incorrectly typed');
+      it.todo('Adds potluck to db');
+      it.todo('Correctly associates potluck with user specified in token');
+      it.todo('Responds with 201 on good post');
+      it.todo('Responds with created potluck on good post');
+
+    });
     describe('[PUT] /api/potlucks/:id', () => {});
     describe('[DELETE] /api/potlucks/:id', () => {});
 
