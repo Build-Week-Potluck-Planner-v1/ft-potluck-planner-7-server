@@ -18,7 +18,7 @@ router.post('/register', registerMiddleware, (req, res, next) => {
 
 
 const loginMiddleware = [
-  validateBody
+  validateBody, validateType
 ];
 
 router.post('/login', loginMiddleware, (req, res, next) => {
