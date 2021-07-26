@@ -614,7 +614,44 @@ describe('server.js', () => {
         expect(res.body.message).toBe('Only existing potlucks can be invited to');
       });
 
-      it.todo('Only allows owner to invite guests');
+      it('Only allows owner to invite guests', async () => {
+        {
+          const {body: {token}} = await request(server)
+                .post('/api/auth/login')
+                .send({
+                  username: 'test2',
+                  password: '1234'
+                });
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+        }
+
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const newInvite = {
+          guest_id: 3,
+          potluck_id: 1
+        };
+        const res = await request(server)
+              .post('/api/invites')
+              .set('Authorization', token)
+              .send(newInvite);
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe('Only the owner of the potluck can be invite guests');
+      });
+
       it.todo('Only allows non-invited users to be invited');
 
       it('Adds invite to db', async () => {
