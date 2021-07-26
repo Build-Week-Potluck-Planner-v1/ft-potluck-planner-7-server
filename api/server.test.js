@@ -259,7 +259,7 @@ describe('server.js', () => {
               .send({});
         expect(res.status).toBe(400);
         expect(res.body.message).toBe(
-          'Please provide a name, date and location for the potluck'
+          'Please provide a name, date, time and location for the potluck'
         );
       });
 
@@ -275,7 +275,8 @@ describe('server.js', () => {
               .set('Authorization', token)
               .send({
                 name: 'big bonanza',
-                date: 'asdf',
+                date: 'next tuesday',
+                time: 1,
                 location: 'right here'
               });
         expect(res.status).toBe(400);
@@ -286,7 +287,8 @@ describe('server.js', () => {
       it('Adds potluck to db', async () => {
         const bigBonanza = {
           name: 'big bonanza',
-          date: '2021-07-25T22:59:30',
+          date: 'July 26',
+          time: '7pm',
           location: 'right here'
         };
         const {body: {token}} = await request(server)
@@ -299,7 +301,6 @@ describe('server.js', () => {
               .post('/api/potlucks')
               .set('Authorization', token)
               .send(bigBonanza);
-        console.log(res.body);
         const expected = [
           bigBonanza
         ];
