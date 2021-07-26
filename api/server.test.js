@@ -145,6 +145,17 @@ describe('server.js', () => {
         expect(res.body.message).toBe("Username doesn't exist");
       });
 
+      it('Responds with a 400 and a message on invalid credentials', async () => {
+        const res = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1235'
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe('Invalid Credentials');
+      });
+
       it('Doesnt effect db', async () => {
         const before = await db('users');
 
