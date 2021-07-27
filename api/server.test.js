@@ -1267,7 +1267,7 @@ describe('server.js', () => {
               .send({
                 has_rsvped: true
               });
-        expect(res.status).toBe(400);
+        expect(res.status).toBe(401);
         expect(res.body.message).toBe('Only invited guest can change has_rsvped');
       });
 

@@ -114,6 +114,7 @@ exports.checkInviteExistsPut = (req, res, next) => {
   Invites.getById(req.params.id)
     .then(invite => {
       if (invite) {
+        req.invite = invite;
         next();
       } else {
         next({
@@ -123,6 +124,17 @@ exports.checkInviteExistsPut = (req, res, next) => {
       }
     })
     .catch(next);
+};
+
+exports.checkUserIsGuest = ({user: {id}, invite: {guest_id}}, res, next) => {
+  if (id === guest_id) {
+    next();
+  } else {
+    next({
+      status: 401,
+      message: 'Only invited guest can change has_rsvped'
+    });
+  }
 };
 
 exports.addInvite = (req, res, next) => {
