@@ -1,5 +1,11 @@
 const db = require('../data/db-config');
 
+exports.getById = (id) => {
+  return db('users_potlucks')
+    .where({id})
+    .first();
+};
+
 exports.getByGuest = (guest_id) => {
   return db('users_potlucks')
     .where({guest_id});

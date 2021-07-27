@@ -1229,7 +1229,7 @@ describe('server.js', () => {
                 has_rsvped: true
               });
         expect(res.status).toBe(400);
-        expect(res.body.message).toBe('Only existing invites can be rsvped to');
+        expect(res.body.message).toBe('Invite with specified id does not exist');
       });
 
       it('Only allows the user with id === guest_id to change has_rsvped', async () => {

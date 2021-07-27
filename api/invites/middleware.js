@@ -110,6 +110,21 @@ exports.checkInviteExists = (req, res, next) => {
     .catch(next);
 };
 
+exports.checkInviteExistsPut = (req, res, next) => {
+  Invites.getById(req.params.id)
+    .then(invite => {
+      if (invite) {
+        next();
+      } else {
+        next({
+          status: 400,
+          message: 'Invite with specified id does not exist'
+        });
+      }
+    })
+    .catch(next);
+};
+
 exports.addInvite = (req, res, next) => {
   Invites.add(req.body)
     .then(([added]) => {
