@@ -9,11 +9,12 @@
   4. [POST] /api/potlucks
   5. [PUT] /api/potlucks/:id
   6. [GET] /api/potlucks/:potluck_id/foods
-  7. [GET] /api/invites
-  8. [POST] /api/invites
-  9. [PUT] /api/invites/:id
-  10. [GET] /api/foods
-  11. [POST] /api/foods
+  7. [POST] /api/potlucks/:potluck_id/foods
+  8. [GET] /api/invites
+  9. [POST] /api/invites
+  10. [PUT] /api/invites/:id
+  11. [GET] /api/foods
+  12. [POST] /api/foods
 
 ## Scripts
 
