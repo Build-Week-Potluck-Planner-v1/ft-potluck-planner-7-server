@@ -250,3 +250,73 @@ exports.addFoodRequest = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.validateFoodPut = (req, res, next) => {
+  const {body: {bringing}} = req;
+  if (bringing !== undefined) {
+    req.body = {bringing};
+    next();
+  } else {
+    next({
+      status: 400,
+      message: 'Please provide bringing for the food request'
+    });
+  }
+};
+
+exports.validateTypeFoodPut = ({body: {bringing}}, res, next) => {
+  if (typeof bringing === 'boolean') {
+    next();
+  } else {
+    next({
+      status: 400,
+      message: 'bringing must be a boolean'
+    });
+  }
+};
+
+exports.checkPotluckExistsFoodPut = (req, res, next) => {
+  Potlucks.getById(req.params.potluck_id)
+    .then(potluck => {
+      if (potluck) {
+        next();
+      } else {
+        next({
+          status: 404,
+          message: 'Potluck does not exist'
+        });
+      }
+    })
+    .catch(next);
+};
+
+exports.checkFoodReqExistsPut = (req, res, next) => {
+  Potlucks.getFoodReqById(req.params.id)
+    .then(food => {
+      if (food) {
+        req.food = food;
+        next();
+      } else {
+        next({
+          status: 404,
+          message: 'Food request does not exist'
+        });
+      }
+    })
+    .catch(next);
+};
+
+exports.updateFoodRequest = (req, res, next) => {
+  const user_id = (req.body.bringing) ? req.user.id : null;
+  const argObj = {
+    user_id,
+    id: req.params.id
+  };
+
+  Potlucks.updateFoodRequest(argObj)
+    .then(updated => {
+      req.updated = updated;
+      next();
+    })
+    .catch(next);
+};

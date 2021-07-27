@@ -3,7 +3,8 @@ exports.up = function(knex) {
   return knex.schema
     .createTable('foods_potlucks', tbl => {
       tbl.increments();
-      tbl.string('quantity', 256);
+      tbl.string('quantity', 256)
+        .notNullable();
       tbl.integer('user_id')
         .unsigned()
         .references('id')
