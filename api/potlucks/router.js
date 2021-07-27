@@ -9,7 +9,14 @@ const {
   checkPotluckExists,
   checkUserIsOwner,
   updatePotluck,
-  getFoods
+  getFoods,
+  validateFood,
+  validateFoodType,
+  checkFoodExists,
+  checkPotluckExistsFood,
+  foodAuthorization,
+  makeFoodIfNameUsed,
+  addFoodRequest
 } = require ('./middleware');
 
 router.get('/', getPotlucks, (req, res, next) => {
@@ -30,6 +37,16 @@ router.put('/:id', putMiddleware, (req, res, next) => {
 
 router.get('/:potluck_id/foods', getFoods, ({foods}, res, next) => {
   res.json(foods);
+});
+
+
+const foodPostMiddleware = [
+  validateFood, validateFoodType, checkFoodExists, checkPotluckExistsFood,
+  foodAuthorization, makeFoodIfNameUsed, addFoodRequest
+];
+
+router.post('/:potluck_id/foods', foodPostMiddleware, (req, res, next) => {
+  res.json(req.added);
 });
 
 module.exports = router;

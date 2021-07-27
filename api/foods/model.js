@@ -11,3 +11,15 @@ exports.add = (food) => {
       return added;
     });
 };
+
+exports.getById = (id) => {
+  return db('foods')
+    .where({id})
+    .first();
+};
+
+exports.getByName = (name) => {
+  return db('foods')
+    .where({name})
+    .first();
+};
