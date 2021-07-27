@@ -32,3 +32,12 @@ exports.addFood = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getFood = (req, res, next) => {
+  Foods.getAll()
+    .then(foods => {
+      req.foods = foods;
+      next();
+    })
+    .catch(next);
+};
