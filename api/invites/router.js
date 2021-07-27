@@ -7,7 +7,8 @@ const {
   checkUserIsOwner,
   checkInviteExists,
   addInvite,
-  getInvites
+  getInvites,
+  validatePut
 } = require('./middleware');
 
 router.get('/', getInvites, ({invites}, res, next) => {
@@ -21,6 +22,13 @@ const postMiddleware = [
 
 router.post('/', postMiddleware, ({added}, res, next) => {
   res.status(201).json(added);
+});
+
+router.put('/:id', validatePut, (req, res, next) => {
+  next({
+    status: 404,
+    message: 'Not implemented'
+  });
 });
 
 module.exports = router;

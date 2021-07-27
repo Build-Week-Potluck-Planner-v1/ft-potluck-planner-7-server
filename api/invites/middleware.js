@@ -15,6 +15,18 @@ exports.validateInvite = (req, res, next) => {
   }
 };
 
+exports.validatePut = (req, res, next) => {
+  const {body: {has_rsvped}} = req;
+  if (has_rsvped !== undefined) {
+    req.body = {has_rsvped};
+    next();
+  } else {
+    next({
+      status: 400,
+      message: 'Please provide has_rsvped for the invite'
+    });
+  };
+};
 
 exports.validateType = ({body: {guest_id, potluck_id}}, res, next) => {
   const isValid = (input) => {
