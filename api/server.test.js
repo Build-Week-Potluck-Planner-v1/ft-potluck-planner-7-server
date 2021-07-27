@@ -1142,6 +1142,67 @@ describe('server.js', () => {
 
   describe('foods', () => {
 
+    describe('[GET] /api/foods', () => {
+
+      it('Responds with a 401 and a message when given no token', async () => {
+        const res = await request(server)
+              .get('/api/foods');
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('No token given');
+      });
+
+      it('Responds with a 401 when given bad token', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const badToken = token.substring(0,15) + 'a' + token.substring(16);
+        const res = await request(server)
+              .get('/api/foods')
+              .set('Authorization', badToken);
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Bad token given');
+      });
+
+      it.todo('Doesnt effect db');
+
+      it('Responds with 200 on good get', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .get('/api/foods')
+              .set('Authorization', token);
+        expect(res.status).toBe(200);
+      });
+
+      it('Responds with all foods on good get', async () => {
+        const hotDogs = {
+          name: 'hot dogs'
+        };
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        await request(server)
+          .post('/api/foods')
+          .set('Authorization', token)
+          .send(hotDogs);
+        const res = await request(server)
+              .get('/api/foods')
+              .set('Authorization', token);
+        expect(res.body).toMatchObject([hotDogs]);
+      });
+
+    });
+
     describe('[POST] /api/foods', () => {
 
       it('Responds with a 401 and a message when given no token', async () => {
