@@ -44,6 +44,17 @@ exports.validateType = ({body: {guest_id, potluck_id}}, res, next) => {
   }
 };
 
+exports.validateTypePut = ({body: {has_rsvped}}, res, next) => {
+  if (typeof has_rsvped === 'boolean') {
+    next();
+  } else {
+    next({
+      status: 400,
+      message: 'has_rsvped should be a boolean'
+    });
+  }
+};
+
 exports.checkGuestExists = ({body: {guest_id}}, res, next) => {
   Users.getById(guest_id)
     .then(guest => {
