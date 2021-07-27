@@ -205,14 +205,6 @@ describe('server.js', () => {
       });
     });
 
-  });
-
-  describe('users', () => {
-
-    describe('[GET] /api/users', () => {}); // for a nicer invite list
-    describe('[PUT] /api/users', () => {
-    }); // literally just for updating passwords
-    describe('[DELETE] /api/users', () => {}); // only a user should be able to delete their own account and maybe an admin
 
   });
 
@@ -1135,7 +1127,294 @@ describe('server.js', () => {
 
     });
 
-    describe('[PUT] /api/invites/:id', () => {});
+    describe('[PUT] /api/invites/:id', () => {
+
+      it('Responds with a 401 and a message when given no token', async () => {
+        const res = await request(server)
+              .put('/api/invites/1')
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('No token given');
+      });
+
+      it('Responds with a 401 when given bad token', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const badToken = token.substring(0,15) + 'a' + token.substring(16);
+        const res = await request(server)
+              .put('/api/invites/1')
+              .set('Authorization', badToken)
+              .send({});
+        expect(res.status).toBe(401);
+        expect(res.body.message).toBe('Bad token given');
+      });
+
+      it('Responds with 400 and a message on missing information', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .put('/api/invites/1')
+              .set('Authorization', token)
+              .send({});
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'Please provide has_rsvped for the invite'
+        );
+      });
+
+      it('Responds with 400 and a message when data is incorrectly typed', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .put('/api/invites/1')
+              .set('Authorization', token)
+              .send({
+                has_rsvped: 'one hundred times'
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe(
+          'has_rsvped should be a boolean');
+      });
+
+      it('Only allows existing invites to be rsvped to', async () => {
+        {
+          const {body: {token}} = await request(server)
+                .post('/api/auth/login')
+                .send({
+                  username: 'test1',
+                  password: '1234'
+                });
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+          const newInvite = {
+            guest_id: 2,
+            potluck_id: 1
+          };
+          await request(server)
+            .post('/api/invites')
+            .set('Authorization', token)
+            .send(newInvite);
+        }
+
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test2',
+                password: '1234'
+              });
+        const res = await request(server)
+              .put('/api/invites/2')
+              .set('Authorization', token)
+              .send({
+                has_rsvped: true
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe('Only existing invites can be rsvped to');
+      });
+
+      it('Only allows the user with id === guest_id to change has_rsvped', async () => {
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+
+        {
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+        }
+
+        const newInvite = {
+          guest_id: 2,
+          potluck_id: 1
+        };
+        await request(server)
+          .post('/api/invites')
+          .set('Authorization', token)
+          .send(newInvite);
+        const res = await request(server)
+              .put('/api/invites/1')
+              .set('Authorization', token)
+              .send({
+                has_rsvped: true
+              });
+        expect(res.status).toBe(400);
+        expect(res.body.message).toBe('Only invited guest can change has_rsvped');
+      });
+
+      it('Changes invite in db', async () => {
+        {
+          const {body: {token}} = await request(server)
+                .post('/api/auth/login')
+                .send({
+                  username: 'test1',
+                  password: '1234'
+                });
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+          const newInvite = {
+            guest_id: 2,
+            potluck_id: 1
+          };
+          await request(server)
+            .post('/api/invites')
+            .set('Authorization', token)
+            .send(newInvite);
+        } // adding potluck to invite test2 to
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test2',
+                password: '1234'
+              });
+        await request(server)
+          .put('/api/invites/1')
+          .set('Authorization', token)
+          .send({
+            has_rsvped: true
+          });
+        const expected = [
+          {
+            guest_id: 2,
+            potluck_id: 1,
+            has_rsvped: true
+          }
+        ];
+        const actual = await db('users_potlucks');
+        expect(actual).toMatchObject(expected);
+      });
+
+      it('Responds with 201 on good post', async () => {
+
+        {
+          const {body: {token}} = await request(server)
+                .post('/api/auth/login')
+                .send({
+                  username: 'test1',
+                  password: '1234'
+                });
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+          const newInvite = {
+            guest_id: 2,
+            potluck_id: 1
+          };
+          await request(server)
+            .post('/api/invites')
+            .set('Authorization', token)
+            .send(newInvite);
+        }
+
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test2',
+                password: '1234'
+              });
+        const res = await request(server)
+              .put('/api/invites/1')
+              .set('Authorization', token)
+              .send({
+                has_rsvped: true
+              });
+        expect(res.status).toBe(201);
+      });
+
+      it('Responds with created invite on good post', async () => {
+        {
+          const {body: {token}} = await request(server)
+                .post('/api/auth/login')
+                .send({
+                  username: 'test1',
+                  password: '1234'
+                });
+          const bigBonanza = {
+            name: 'big bonanza',
+            date: 'July 26',
+            time: '7pm',
+            location: 'right here'
+          };
+          await request(server)
+            .post('/api/potlucks')
+            .set('Authorization', token)
+            .send(bigBonanza);
+
+          const newInvite = {
+            guest_id: 2,
+            potluck_id: 1
+          };
+          await request(server)
+            .post('/api/invites')
+            .set('Authorization', token)
+            .send(newInvite);
+        }
+        const {body: {token}} = await request(server)
+              .post('/api/auth/login')
+              .send({
+                username: 'test1',
+                password: '1234'
+              });
+        const res = await request(server)
+              .put('/api/invites/1')
+              .set('Authorization', token)
+              .send({
+                has_rsvped: true
+              });
+        expect(res.body).toMatchObject({
+          id: 1,
+          guest_id: 2,
+          potluck_id: 1,
+          has_rsvped: true
+        });
+      });
+
+    }); // pretty much just for rsvp-ing
+
     describe('[DELETE] /api/invites/:id', () => {});
 
   });
@@ -1318,6 +1597,12 @@ describe('server.js', () => {
               .send(hotDogs);
         expect(res.body).toMatchObject(hotDogs);
       });
+
+    });
+
+    describe('[POST] /api/potlucks/:id/foods', () => {
+
+      it.todo('figure it out');
 
     });
 
