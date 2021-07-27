@@ -10,7 +10,8 @@
   5. [PUT] /api/potlucks/:id
   6. [GET] /api/invites
   7. [POST] /api/invites
-  8. [POST] /api/foods
+  8. [GET] /api/foods
+  9. [POST] /api/foods
 
 ## Scripts
 
