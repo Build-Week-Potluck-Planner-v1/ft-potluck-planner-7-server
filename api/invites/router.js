@@ -7,7 +7,12 @@ const {
   checkUserIsOwner,
   checkInviteExists,
   addInvite,
-  getInvites
+  getInvites,
+  validatePut,
+  validateTypePut,
+  checkInviteExistsPut,
+  checkUserIsGuest,
+  updateInvite
 } = require('./middleware');
 
 router.get('/', getInvites, ({invites}, res, next) => {
@@ -21,6 +26,15 @@ const postMiddleware = [
 
 router.post('/', postMiddleware, ({added}, res, next) => {
   res.status(201).json(added);
+});
+
+const putMiddleware = [
+  validatePut, validateTypePut, checkInviteExistsPut, checkUserIsGuest,
+  updateInvite
+];
+
+router.put('/:id', putMiddleware, (req, res, next) => {
+  res.json(req.updated);
 });
 
 module.exports = router;
