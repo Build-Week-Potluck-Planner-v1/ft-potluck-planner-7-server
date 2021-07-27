@@ -21,3 +21,9 @@ exports.add = (invite) => {
   return db('users_potlucks')
     .insert(invite, ['id', 'potluck_id', 'guest_id', 'has_rsvped']);
 };
+
+exports.update = (id, has_rsvped) => {
+  return db('users_potlucks')
+    .where({id})
+    .update({has_rsvped});
+};

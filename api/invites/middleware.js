@@ -131,7 +131,7 @@ exports.checkUserIsGuest = ({user: {id}, invite: {guest_id}}, res, next) => {
     next();
   } else {
     next({
-      status: 401,
+      status: 403,
       message: 'Only invited guest can change has_rsvped'
     });
   }
@@ -151,6 +151,15 @@ exports.getInvites = (req, res, next) => {
   Invites.getByGuest(id)
     .then(invites => {
       req.invites = invites;
+      next();
+    })
+    .catch(next);
+};
+
+exports.updateInvite = (req, res, next) => {
+  Invites.update(req.params.id, req.body.has_rsvped)
+    .then(returnVal => {
+      console.log(returnVal);
       next();
     })
     .catch(next);
