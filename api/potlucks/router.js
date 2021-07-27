@@ -8,7 +8,8 @@ const {
   validatePut,
   checkPotluckExists,
   checkUserIsOwner,
-  updatePotluck
+  updatePotluck,
+  getFoods
 } = require ('./middleware');
 
 router.get('/', getPotlucks, (req, res, next) => {
@@ -25,6 +26,10 @@ const putMiddleware = [
 
 router.put('/:id', putMiddleware, (req, res, next) => {
   res.json(req.updated);
+});
+
+router.get('/:potluck_id/foods', getFoods, ({foods}, res, next) => {
+  res.json(foods);
 });
 
 module.exports = router;

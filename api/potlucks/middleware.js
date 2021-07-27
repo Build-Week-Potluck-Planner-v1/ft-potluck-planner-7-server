@@ -113,3 +113,13 @@ exports.updatePotluck = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.getFoods = (req, res, next) => {
+  const {params: {potluck_id}} = req;
+  Potlucks.getFoods(potluck_id)
+    .then(foods => {
+      req.foods = foods;
+      next();
+    })
+    .catch(next);
+};

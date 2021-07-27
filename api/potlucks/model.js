@@ -30,3 +30,8 @@ exports.update = (id, potluck) => {
     .where({id})
     .update(potluck, ['id', 'owner_id', 'name', 'date', 'time', 'location']);
 };
+
+exports.getFoods = (potluck_id) => {
+  return db('foods_potlucks')
+    .where({potluck_id});
+};
