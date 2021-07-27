@@ -123,3 +123,39 @@ exports.getFoods = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.validateFood = (req, res, next) => {
+  const {body: {food_id, quantity, name}} = req;
+  const foodIdXORName = !!(!!food_id ^ !!name);
+  if (quantity && foodIdXORName) {
+    if (food_id) {
+      req.body = {food_id, quantity};
+    } else {
+      req.body = {name, quantity};
+    }
+    next();
+  } else {
+    next({
+      status: 400,
+      message: 'Please provide a quantity and either a food_id or a name, but not both'
+    });
+  }
+};
+
+exports.validateFoodType = ({body: {food_id, quantity, name}}, res, next) => {
+  const food_idValid = ((!food_id) ||
+                        ((typeof food_id === 'number') &&
+                         (Math.floor(food_id) === food_id) &&
+                         (food_id > 0)));
+  const quantityValid = (typeof quantity === 'string');
+  const nameValid = ((!name) ||
+                     (typeof name === 'string'));
+  if (food_idValid && quantityValid && nameValid) {
+    next();
+  } else {
+    next({
+      status: 400,
+      message: 'quantity and name should be strings and food_id should be a positive integer if included'
+    });
+  }
+};
