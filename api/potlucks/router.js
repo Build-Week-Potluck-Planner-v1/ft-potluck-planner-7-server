@@ -49,4 +49,11 @@ router.post('/:potluck_id/foods', foodPostMiddleware, (req, res, next) => {
   res.json(req.added);
 });
 
+router.put('/:potluck_id/foods', (req, res, next) => {
+  next({
+    status: 404,
+    message: 'Not implemented'
+  });
+});
+
 module.exports = router;
