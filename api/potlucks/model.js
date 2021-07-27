@@ -36,11 +36,31 @@ exports.getFoods = (potluck_id) => {
     .where({potluck_id});
 };
 
+exports.getFoodReqById = (id) => {
+  return db('foods_potlucks as fp')
+    .where('fp.id', id)
+    .join('foods', 'fp.food_id', 'foods.id')
+    .first();
+};
+
 exports.addFoodRequest = (food_request) => {
   return db('foods_potlucks')
     .insert(food_request, ['id', 'food_id', 'potluck_id', 'user_id', 'quantity'])
     .then(([added]) => {
       return added;
+    });
+};
+
+exports.updateFoodRequest = ({user_id, id}) => {
+  return db('foods_potlucks')
+    .where({id})
+    .update({user_id})
+    .then(() => {
+      return db('foods_potlucks as fp')
+        .select('fp.*', 'foods.name')
+        .where('fp.id', id)
+        .join('foods', 'fp.food_id', 'foods.id')
+        .first();
     });
 };
 

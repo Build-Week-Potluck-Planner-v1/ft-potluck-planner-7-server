@@ -16,7 +16,12 @@ const {
   checkPotluckExistsFood,
   foodAuthorization,
   makeFoodIfNameUsed,
-  addFoodRequest
+  addFoodRequest,
+  validateFoodPut,
+  validateTypeFoodPut,
+  checkFoodReqExistsPut,
+  checkPotluckExistsFoodPut,
+  updateFoodRequest
 } = require ('./middleware');
 
 router.get('/', getPotlucks, (req, res, next) => {
@@ -49,11 +54,11 @@ router.post('/:potluck_id/foods', foodPostMiddleware, (req, res, next) => {
   res.json(req.added);
 });
 
-router.put('/:potluck_id/foods', (req, res, next) => {
-  next({
-    status: 404,
-    message: 'Not implemented'
-  });
+const foodPutMiddleware = [
+  validateFoodPut, validateTypeFoodPut, checkPotluckExistsFoodPut, foodAuthorization, checkFoodReqExistsPut, updateFoodRequest
+];
+router.put('/:potluck_id/foods/:id', foodPutMiddleware, ({updated}, res, next) => {
+  res.json(updated);
 });
 
 module.exports = router;
