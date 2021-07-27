@@ -1,4 +1,5 @@
 const Potlucks = require('./model');
+const Foods = require('../foods/model');
 
 const isString = (obj) => typeof obj === 'string';
 
@@ -158,4 +159,94 @@ exports.validateFoodType = ({body: {food_id, quantity, name}}, res, next) => {
       message: 'quantity and name should be strings and food_id should be a positive integer if included'
     });
   }
+};
+
+exports.checkFoodExists = (req, res, next) => {
+  if (req.body.food_id) {
+    Foods.getById(req.body.food_id)
+      .then(food => {
+        if (food) {
+          next();
+        } else {
+          next({
+            status: 404,
+            message: 'Food with specified id does not exist'
+          });
+        }
+      })
+      .catch(next);
+  } else {
+    next();
+  }
+};
+
+exports.checkPotluckExistsFood = (req, res, next) => {
+  Potlucks.getById(req.params.potluck_id)
+    .then(potluck => {
+      if (potluck) {
+        next();
+      } else {
+        next({
+          status: 400,
+          message: 'Potluck with given id does not exist'
+        });
+      }
+    })
+    .catch(next);
+};
+
+exports.foodAuthorization = (req, res, next) => {
+  Potlucks.getOwnerAndGuest(req.params.potluck_id)
+    .then(returnSet => {
+      if (returnSet.has(req.user.id)) {
+        next();
+      } else {
+        next({
+          status: 403,
+          message: 'Only the owner and guests of a potluck are authorized to request food'
+        });
+      }
+    })
+    .catch(next);
+  // the owner and guests should be allowed to make food requests
+};
+
+exports.makeFoodIfNameUsed = (req, res, next) => {
+  const {body: {name}} = req;
+  if (name) {
+    Foods.add({name})
+      .then(added => {
+        req.body.food_id = added.id;
+        next();
+      })
+      .catch(err => {
+        // res.status(500).json(err);
+        if (err.code === '23505') { // lets unique constraint errors through
+          Foods.getByName(name)
+            .then(food => {
+              req.body.food_id = food.id;
+              next();
+            })
+            .catch(next);
+        } else {
+          next(err);
+        }
+      });
+  } else {
+    next();
+  }
+};
+
+exports.addFoodRequest = (req, res, next) => {
+  const food_request = {
+    food_id: req.body.food_id,
+    potluck_id: req.params.potluck_id,
+    quantity: req.body.quantity
+  };
+  Potlucks.addFoodRequest(food_request)
+    .then(added => {
+      req.added = added;
+      next();
+    })
+    .catch(next);
 };
