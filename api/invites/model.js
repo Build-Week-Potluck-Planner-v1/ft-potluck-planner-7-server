@@ -25,5 +25,8 @@ exports.add = (invite) => {
 exports.update = (id, has_rsvped) => {
   return db('users_potlucks')
     .where({id})
-    .update({has_rsvped});
+    .update({has_rsvped}, ['id', 'potluck_id', 'guest_id', 'has_rsvped'])
+    .then(([updated]) => {
+      return updated;
+    });
 };

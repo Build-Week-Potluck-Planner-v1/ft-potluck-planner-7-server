@@ -1321,7 +1321,7 @@ describe('server.js', () => {
         expect(actual).toMatchObject(expected);
       });
 
-      it('Responds with 201 on good post', async () => {
+      it('Responds with 200 on good put', async () => {
 
         {
           const {body: {token}} = await request(server)
@@ -1362,10 +1362,10 @@ describe('server.js', () => {
               .send({
                 has_rsvped: true
               });
-        expect(res.status).toBe(201);
+        expect(res.status).toBe(200);
       });
 
-      it('Responds with created invite on good post', async () => {
+      it('Responds with updated invite on good put', async () => {
         {
           const {body: {token}} = await request(server)
                 .post('/api/auth/login')
@@ -1396,7 +1396,7 @@ describe('server.js', () => {
         const {body: {token}} = await request(server)
               .post('/api/auth/login')
               .send({
-                username: 'test1',
+                username: 'test2',
                 password: '1234'
               });
         const res = await request(server)

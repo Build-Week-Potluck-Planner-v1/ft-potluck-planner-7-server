@@ -34,10 +34,7 @@ const putMiddleware = [
 ];
 
 router.put('/:id', putMiddleware, (req, res, next) => {
-  next({
-    status: 404,
-    message: 'Not implemented'
-  });
+  res.json(req.updated);
 });
 
 module.exports = router;

@@ -158,8 +158,8 @@ exports.getInvites = (req, res, next) => {
 
 exports.updateInvite = (req, res, next) => {
   Invites.update(req.params.id, req.body.has_rsvped)
-    .then(returnVal => {
-      console.log(returnVal);
+    .then(updated => {
+      req.updated = updated;
       next();
     })
     .catch(next);
