@@ -9,6 +9,7 @@ const {
   checkPotluckExists,
   checkUserIsOwner,
   updatePotluck,
+  deletePotluck,
   getFoods,
   validateFood,
   validateFoodType,
@@ -40,11 +41,8 @@ router.put('/:id', putMiddleware, (req, res, next) => {
   res.json(req.updated);
 });
 
-router.delete('/:id', checkPotluckExists, checkUserIsOwner, (req, res, next) => {
-  next({
-    status: 404,
-    message: 'Not implemented'
-  });
+router.delete('/:id', checkPotluckExists, checkUserIsOwner, deletePotluck, (req, res, next) => {
+  res.json(req.deleted);
 });
 
 router.get('/:potluck_id/foods', getFoods, ({foods}, res, next) => {
