@@ -302,13 +302,13 @@ exports.checkPotluckExistsFoodPut = (req, res, next) => {
 exports.checkFoodReqExistsPut = (req, res, next) => {
   Potlucks.getFoodReqById(req.params.id)
     .then(food => {
-      if (food) {
+      if (food && req.params.potluck_id === food.potluck_id) {
         req.food = food;
         next();
       } else {
         next({
           status: 404,
-          message: 'Food request does not exist'
+          message: 'Food request does not exist or is not attached to specified potluck'
         });
       }
     })
