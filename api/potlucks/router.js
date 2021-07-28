@@ -22,7 +22,8 @@ const {
   validateTypeFoodPut,
   checkFoodReqExistsPut,
   checkPotluckExistsFoodPut,
-  updateFoodRequest
+  updateFoodRequest,
+  deleteFoodRequest
 } = require ('./middleware');
 
 router.get('/', getPotlucks, (req, res, next) => {
@@ -67,6 +68,8 @@ router.put('/:potluck_id/foods/:id', foodPutMiddleware, ({updated}, res, next) =
   res.json(updated);
 });
 
-// router.delete('/:potluck_id/foods/:id');
+router.delete('/:potluck_id/foods/:id', checkPotluckExistsFoodPut, foodAuthorization, checkFoodReqExistsPut, deleteFoodRequest, ({deleted}, res, next) => {
+  res.json(deleted);
+});
 
 module.exports = router;

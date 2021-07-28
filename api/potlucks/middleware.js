@@ -212,7 +212,7 @@ exports.foodAuthorization = (req, res, next) => {
       } else {
         next({
           status: 403,
-          message: 'Only the owner and guests of a potluck are authorized to request food'
+          message: 'Only the owner and guests of a potluck are authorized to request food, or update or delete food requests'
         });
       }
     })
@@ -325,6 +325,15 @@ exports.updateFoodRequest = (req, res, next) => {
   Potlucks.updateFoodRequest(argObj)
     .then(updated => {
       req.updated = updated;
+      next();
+    })
+    .catch(next);
+};
+
+exports.deleteFoodRequest = (req, res, next) => {
+  Potlucks.deleteFoodRequest(req.params.id)
+    .then(deleted => {
+      req.deleted = deleted;
       next();
     })
     .catch(next);
