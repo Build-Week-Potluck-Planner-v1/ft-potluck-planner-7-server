@@ -4,21 +4,21 @@
 
 - current endpoints are
 
-| Endpoint | params | input | output | requires Auth token |
-| -------- | ------ | ----- | ------ | ------------------- |
-| [POST] /api/auth/login | none | username, password | message, token | Nope |
-| [POST] /api/auth/register | none | username, password | message | Nope |
-| [GET] /api/potlucks | none | none | all of the potlucks for the user | yes |
-| [POST] /api/potlucks | none | name, date, time, location | added potluck | yes |
-| [PUT] /api/potlucks/:id | id | date, time, location | updated potluck | yes |
-| [GET] /api/potlucks/:potluck_id/foods | potluck_id | none | food requests for specified potluck | yes |
-| [POST] /api/potlucks/:potluck_id/foods | potluck_id | quantity and food or name | added food request | yes |
-| [PUT] /api/potlucks/:potluck_id/foods/:id | potluck_id, id for food request | bringing | updated food request | yes |
-| [GET] /api/invites | none | none | an array of the users invites | yes |
-| [POST] /api/invites | none | guest_id and potluck_id | created invite | yes |
-| [PUT] /api/invites/:id | id for invite | has_rsvped | updated invite | yes |
-| [GET] /api/foods | none | none | all of the foods in the database | yes |
-| [POST] /api/foods | none | name | added food item | yes |
+| Endpoint | params | input | output | requires Auth token | who can use this |
+| -------- | ------ | ----- | ------ | ------------------- | ---------------- |
+| [POST] /api/auth/login | none | username, password | message, token | Nope | anybody |
+| [POST] /api/auth/register | none | username, password | message | Nope | anybody |
+| [GET] /api/potlucks | none | none | all of the potlucks for the user | yes | registered users |
+| [POST] /api/potlucks | none | name, date, time, location | added potluck | yes | registered users |
+| [PUT] /api/potlucks/:id | id | date, time, location | updated potluck | yes | organizer of the potluck |
+| [GET] /api/potlucks/:potluck_id/foods | potluck_id | none | food requests for specified potluck | yes | registered users |
+| [POST] /api/potlucks/:potluck_id/foods | potluck_id | quantity and food or name | added food request | yes | organizer of potluck and invited users |
+| [PUT] /api/potlucks/:potluck_id/foods/:id | potluck_id, id for food request | bringing | updated food request | yes | organizer of potluck and invited users |
+| [GET] /api/invites | none | none | an array of the users invites | yes | registered users |
+| [POST] /api/invites | none | guest_id and potluck_id | created invite | yes | owner of potluck with potluck_id |
+| [PUT] /api/invites/:id | id for invite | has_rsvped | updated invite | yes | guest specified by invite |
+| [GET] /api/foods | none | none | all of the foods in the database | yes | registered users |
+| [POST] /api/foods | none | name | added food item | yes | registered users |
 
 ## Scripts
 
