@@ -22,7 +22,8 @@ const {
   validateTypeFoodPut,
   checkFoodReqExistsPut,
   checkPotluckExistsFoodPut,
-  updateFoodRequest
+  updateFoodRequest,
+  deleteFoodRequest
 } = require ('./middleware');
 
 router.get('/', getPotlucks, (req, res, next) => {
@@ -67,7 +68,7 @@ router.put('/:potluck_id/foods/:id', foodPutMiddleware, ({updated}, res, next) =
   res.json(updated);
 });
 
-router.delete('/:potluck_id/foods/:id', (req, res, next) => {
+router.delete('/:potluck_id/foods/:id', checkPotluckExistsFoodPut, foodAuthorization, checkFoodReqExistsPut, deleteFoodRequest, (req, res, next) => {
   next({
     status: 404,
     message: 'Not implemented'
