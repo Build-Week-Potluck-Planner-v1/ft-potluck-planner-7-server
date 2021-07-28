@@ -115,6 +115,15 @@ exports.updatePotluck = (req, res, next) => {
     .catch(next);
 };
 
+exports.deletePotluck = (req, res, next) => {
+  Potlucks.delete(req.params.id)
+    .then(deleted => {
+      req.deleted = deleted;
+      next();
+    })
+    .catch(next);
+};
+
 exports.getFoods = (req, res, next) => {
   const {params: {potluck_id}} = req;
   Potlucks.getFoods(potluck_id)

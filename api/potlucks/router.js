@@ -9,6 +9,7 @@ const {
   checkPotluckExists,
   checkUserIsOwner,
   updatePotluck,
+  deletePotluck,
   getFoods,
   validateFood,
   validateFoodType,
@@ -40,6 +41,10 @@ router.put('/:id', putMiddleware, (req, res, next) => {
   res.json(req.updated);
 });
 
+router.delete('/:id', checkPotluckExists, checkUserIsOwner, deletePotluck, (req, res, next) => {
+  res.json(req.deleted);
+});
+
 router.get('/:potluck_id/foods', getFoods, ({foods}, res, next) => {
   res.json(foods);
 });
@@ -57,8 +62,11 @@ router.post('/:potluck_id/foods', foodPostMiddleware, (req, res, next) => {
 const foodPutMiddleware = [
   validateFoodPut, validateTypeFoodPut, checkPotluckExistsFoodPut, foodAuthorization, checkFoodReqExistsPut, updateFoodRequest
 ];
+
 router.put('/:potluck_id/foods/:id', foodPutMiddleware, ({updated}, res, next) => {
   res.json(updated);
 });
+
+// router.delete('/:potluck_id/foods/:id');
 
 module.exports = router;

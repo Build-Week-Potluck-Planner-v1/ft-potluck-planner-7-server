@@ -31,6 +31,15 @@ exports.update = (id, potluck) => {
     .update(potluck, ['id', 'owner_id', 'name', 'date', 'time', 'location']);
 };
 
+exports.delete = (id) => {
+  return db('potlucks')
+    .where({id})
+    .del(['id', 'owner_id', 'name', 'date', 'time', 'location'])
+    .then(([deleted]) => {
+      return deleted;
+    });
+};
+
 exports.getFoods = (potluck_id) => {
   return db('foods_potlucks')
     .where({potluck_id});
