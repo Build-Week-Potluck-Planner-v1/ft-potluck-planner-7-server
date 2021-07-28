@@ -12,7 +12,9 @@ const {
   validateTypePut,
   checkInviteExistsPut,
   checkUserIsGuest,
-  updateInvite
+  updateInvite,
+  checkUserIsOwnerOrGuest,
+  deleteInvite
 } = require('./middleware');
 
 router.get('/', getInvites, ({invites}, res, next) => {
@@ -33,15 +35,16 @@ const putMiddleware = [
   updateInvite
 ];
 
-router.put('/:id', putMiddleware, (req, res, next) => {
-  res.json(req.updated);
+router.put('/:id', putMiddleware, ({updated}, res, next) => {
+  res.json(updated);
 });
 
-router.delete('/:id', (req, res, next) => {
-  next({
-    status: 404,
-    message: 'Not implemented'
-  });
+const deleteMiddleware = [
+  checkInviteExistsPut, checkUserIsOwnerOrGuest, deleteInvite
+];
+
+router.delete('/:id', deleteMiddleware, ({deleted}, res, next) => {
+  res.json(deleted);
 });
 
 module.exports = router;
