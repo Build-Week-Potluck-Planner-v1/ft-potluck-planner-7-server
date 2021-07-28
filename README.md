@@ -18,6 +18,7 @@
 | [GET] /api/invites | none | none | an array of the users invites | yes | registered users |
 | [POST] /api/invites | none | guest_id and potluck_id | created invite | yes | owner of potluck with potluck_id |
 | [PUT] /api/invites/:id | id for invite | has_rsvped | updated invite | yes | guest specified by invite |
+| [DELETE] /api/invites/:id | id for invite | none | deleted invite | yes | owner of potluck invite is connected to or guest specified by invite |
 | [GET] /api/foods | none | none | all of the foods in the database | yes | registered users |
 | [POST] /api/foods | none | name | added food item | yes | registered users |
 
