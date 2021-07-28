@@ -30,3 +30,10 @@ exports.update = (id, has_rsvped) => {
       return updated;
     });
 };
+
+exports.delete = (id) => {
+  return db('users_potlucks')
+    .where({id})
+    .del(['id', 'potluck_id', 'guest_id', 'has_rsvped'])
+    .then(([deleted]) => deleted);
+};

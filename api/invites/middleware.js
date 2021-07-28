@@ -164,3 +164,31 @@ exports.updateInvite = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.checkUserIsOwnerOrGuest = (req, res, next) => {
+  if (req.invite.guest_id === req.user.id) {
+    next();
+  } else {
+    Potlucks.getById(req.invite.potluck_id)
+      .then(potluck => {
+        if (potluck.owner_id === req.user.id) {
+          next();
+        } else {
+          next({
+            status: 403,
+            message: 'Only the owner of the potluck and the guest on the invite can delete an invite'
+          });
+        }
+      })
+      .catch(next);
+  }
+};
+
+exports.deleteInvite = (req, res, next) => {
+  Invites.delete(req.params.id)
+    .then(deleted => {
+      req.deleted = deleted;
+      next();
+    })
+    .catch(next);
+};
