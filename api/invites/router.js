@@ -37,4 +37,11 @@ router.put('/:id', putMiddleware, (req, res, next) => {
   res.json(req.updated);
 });
 
+router.delete('/:id', (req, res, next) => {
+  next({
+    status: 404,
+    message: 'Not implemented'
+  });
+});
+
 module.exports = router;
