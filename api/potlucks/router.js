@@ -67,6 +67,11 @@ router.put('/:potluck_id/foods/:id', foodPutMiddleware, ({updated}, res, next) =
   res.json(updated);
 });
 
-// router.delete('/:potluck_id/foods/:id');
+router.delete('/:potluck_id/foods/:id', (req, res, next) => {
+  next({
+    status: 404,
+    message: 'Not implemented'
+  });
+});
 
 module.exports = router;
