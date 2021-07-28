@@ -11,6 +11,7 @@
 | [GET] /api/potlucks | none | none | all of the potlucks for the user | yes | registered users |
 | [POST] /api/potlucks | none | name, date, time, location | added potluck | yes | registered users |
 | [PUT] /api/potlucks/:id | id | date, time, location | updated potluck | yes | organizer of the potluck |
+| [DELETE] /api/potlucks/:id | id | none | deleted potluck | yes | organizer of the potluck |
 | [GET] /api/potlucks/:potluck_id/foods | potluck_id | none | food requests for specified potluck | yes | registered users |
 | [POST] /api/potlucks/:potluck_id/foods | potluck_id | quantity and food or name | added food request | yes | organizer of potluck and invited users |
 | [PUT] /api/potlucks/:potluck_id/foods/:id | potluck_id, id for food request | bringing | updated food request | yes | organizer of potluck and invited users |
