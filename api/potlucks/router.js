@@ -68,11 +68,8 @@ router.put('/:potluck_id/foods/:id', foodPutMiddleware, ({updated}, res, next) =
   res.json(updated);
 });
 
-router.delete('/:potluck_id/foods/:id', checkPotluckExistsFoodPut, foodAuthorization, checkFoodReqExistsPut, deleteFoodRequest, (req, res, next) => {
-  next({
-    status: 404,
-    message: 'Not implemented'
-  });
+router.delete('/:potluck_id/foods/:id', checkPotluckExistsFoodPut, foodAuthorization, checkFoodReqExistsPut, deleteFoodRequest, ({deleted}, res, next) => {
+  res.json(deleted);
 });
 
 module.exports = router;

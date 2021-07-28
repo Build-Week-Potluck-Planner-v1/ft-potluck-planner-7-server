@@ -331,6 +331,10 @@ exports.updateFoodRequest = (req, res, next) => {
 };
 
 exports.deleteFoodRequest = (req, res, next) => {
-  console.log('deleteFoodRequest wired');
-  next();
+  Potlucks.deleteFoodRequest(req.params.id)
+    .then(deleted => {
+      req.deleted = deleted;
+      next();
+    })
+    .catch(next);
 };

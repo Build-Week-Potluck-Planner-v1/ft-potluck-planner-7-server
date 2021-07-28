@@ -73,6 +73,19 @@ exports.updateFoodRequest = ({user_id, id}) => {
     });
 };
 
+exports.deleteFoodRequest = (id) => {
+  return db('food_potlucks')
+    .where({id})
+    .del()
+    .then(() => {
+      return db('foods_potlucks as fp')
+        .select('fp.*', 'foods.name')
+        .where('fp.id', id)
+        .join('foods', 'fp.food_id', 'foods.id')
+        .first();
+    });
+};
+
 exports.getOwnerAndGuest = (potluck_id) => {
   return db('potlucks as p')
     .leftJoin('users_potlucks as up', 'p.id', 'up.potluck_id')
