@@ -3,19 +3,22 @@
 - deployed to heroku at https://ft-potluck-planner-7-server.herokuapp.com/
 
 - current endpoints are
-  1. [POST] /api/auth/login
-  2. [POST] /api/auth/register
-  3. [GET] /api/potlucks
-  4. [POST] /api/potlucks
-  5. [PUT] /api/potlucks/:id
-  6. [GET] /api/potlucks/:potluck_id/foods
-  7. [POST] /api/potlucks/:potluck_id/foods
-  8. [PUT] /api/potlucks/:potluck_id/foods/:id
-  9. [GET] /api/invites
-  10. [POST] /api/invites
-  11. [PUT] /api/invites/:id
-  12. [GET] /api/foods
-  13. [POST] /api/foods
+
+| Endpoint | params | input | output | requires Auth token |
+| -------- | ------ | ----- | ------ | ------------------- |
+| [POST] /api/auth/login | none | username, password | message, token | Nope |
+| [POST] /api/auth/register | none | username, password | message | Nope |
+| [GET] /api/potlucks | none | none | all of the potlucks for the user | yes |
+| [POST] /api/potlucks | none | name, date, time, location | added potluck | yes |
+| [PUT] /api/potlucks/:id | id | date, time, location | updated potluck | yes |
+| [GET] /api/potlucks/:potluck_id/foods | potluck_id | none | food requests for specified potluck | yes |
+| [POST] /api/potlucks/:potluck_id/foods | potluck_id | quantity and food or name | added food request | yes |
+| [PUT] /api/potlucks/:potluck_id/foods/:id | potluck_id, id for food request | bringing | updated food request | yes |
+| [GET] /api/invites | none | none | an array of the users invites | yes |
+| [POST] /api/invites | none | guest_id and potluck_id | created invite | yes |
+| [PUT] /api/invites/:id | id for invite | has_rsvped | updated invite | yes |
+| [GET] /api/foods | none | none | all of the foods in the database | yes |
+| [POST] /api/foods | none | name | added food item | yes |
 
 ## Scripts
 
