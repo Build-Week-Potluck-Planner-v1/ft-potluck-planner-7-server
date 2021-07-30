@@ -8,6 +8,7 @@ exports.getById = (id) => {
 
 exports.getByGuest = (guest_id) => {
   return db('users_potlucks')
+    .select('users_potlucks.*', 'potlucks.owner_id', 'potlucks.name', 'potlucks.date', 'potlucks.time', 'potlucks.location')
     .join('potlucks', 'users_potlucks.potluck_id', 'potlucks.id')
     .where({guest_id});
 };
